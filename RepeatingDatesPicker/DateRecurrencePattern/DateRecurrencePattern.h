@@ -1,7 +1,4 @@
 //
-//  DateRecurrencePattern.h
-//  DateRecurrencePattern
-//
 //  Created by Taehun Kim on 19.08.23.
 //
 

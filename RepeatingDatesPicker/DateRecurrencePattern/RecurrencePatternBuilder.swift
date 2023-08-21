@@ -5,7 +5,7 @@
 import Foundation
 
 public enum RecurrencePatternBuilder {
-    public func predict(from: [Date], start: Date, end: Date) -> DateRecurrence {
+    public static func predict(from: [Date], start: Date, end: Date) -> DateRecurrence {
         let pattern = RecurrencePattern.daily(.days(1))
         return DateRecurrence(startDate: start, endDate: end, pattern: pattern)
     }

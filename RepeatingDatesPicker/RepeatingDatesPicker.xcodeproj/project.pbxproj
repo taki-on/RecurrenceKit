@@ -11,13 +11,14 @@
 		9100C68A2A94137300C1B506 /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C6892A94137300C1B506 /* WeekDay.swift */; };
 		9100C68C2A94139C00C1B506 /* DailyPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68B2A94139C00C1B506 /* DailyPattern.swift */; };
 		9100C68E2A9413B300C1B506 /* WeeklyPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */; };
+		9100C6992A9416CA00C1B506 /* DateRecurrencePattern.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; };
+		9100C69F2A9416D900C1B506 /* RecurrencePatternBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68F2A9415BD00C1B506 /* RecurrencePatternBuilderTests.swift */; };
+		9100C6A02A9416DB00C1B506 /* RecurrencePatternExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499942A91721F00228E09 /* RecurrencePatternExtractorTests.swift */; };
 		9144997B2A9170CD00228E09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 914499752A9170CD00228E09 /* Assets.xcassets */; };
 		9144997C2A9170CD00228E09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 914499772A9170CD00228E09 /* Preview Assets.xcassets */; };
 		9144997D2A9170CD00228E09 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499782A9170CD00228E09 /* ContentView.swift */; };
 		9144997E2A9170CD00228E09 /* RepeatingDatesPickerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9144997A2A9170CD00228E09 /* RepeatingDatesPickerApp.swift */; };
 		914499882A91721F00228E09 /* DateRecurrencePattern.docc in Sources */ = {isa = PBXBuildFile; fileRef = 914499872A91721F00228E09 /* DateRecurrencePattern.docc */; };
-		9144998E2A91721F00228E09 /* DateRecurrencePattern.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; };
-		914499952A91721F00228E09 /* DateRecurrencePatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499942A91721F00228E09 /* DateRecurrencePatternTests.swift */; };
 		914499962A91721F00228E09 /* DateRecurrencePattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 914499862A91721F00228E09 /* DateRecurrencePattern.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		914499992A91721F00228E09 /* DateRecurrencePattern.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; };
 		9144999A2A91721F00228E09 /* DateRecurrencePattern.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -27,19 +28,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9144998F2A91721F00228E09 /* PBXContainerItemProxy */ = {
+		9100C69A2A9416CA00C1B506 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 918DD0D92A858BB400BD323C /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 914499832A91721F00228E09;
 			remoteInfo = DateRecurrencePattern;
-		};
-		914499912A91721F00228E09 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 918DD0D92A858BB400BD323C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 918DD0E02A858BB400BD323C;
-			remoteInfo = RepeatingDatesPickerDemo;
 		};
 		914499972A91721F00228E09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -69,6 +63,9 @@
 		9100C6892A94137300C1B506 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
 		9100C68B2A94139C00C1B506 /* DailyPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPattern.swift; sourceTree = "<group>"; };
 		9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPattern.swift; sourceTree = "<group>"; };
+		9100C68F2A9415BD00C1B506 /* RecurrencePatternBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternBuilderTests.swift; sourceTree = "<group>"; };
+		9100C6952A9416CA00C1B506 /* DateRecurrencePatternTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DateRecurrencePatternTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9100C6A12A9417BF00C1B506 /* DateRecurrencePattern.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DateRecurrencePattern.xctestplan; sourceTree = "<group>"; };
 		914499752A9170CD00228E09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		914499772A9170CD00228E09 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		914499782A9170CD00228E09 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,8 +74,7 @@
 		914499842A91721F00228E09 /* DateRecurrencePattern.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DateRecurrencePattern.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		914499862A91721F00228E09 /* DateRecurrencePattern.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateRecurrencePattern.h; sourceTree = "<group>"; };
 		914499872A91721F00228E09 /* DateRecurrencePattern.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DateRecurrencePattern.docc; sourceTree = "<group>"; };
-		9144998D2A91721F00228E09 /* DateRecurrencePatternTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DateRecurrencePatternTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		914499942A91721F00228E09 /* DateRecurrencePatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateRecurrencePatternTests.swift; sourceTree = "<group>"; };
+		914499942A91721F00228E09 /* RecurrencePatternExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternExtractorTests.swift; sourceTree = "<group>"; };
 		918DD0E12A858BB400BD323C /* RepeatingDatesPickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepeatingDatesPickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		918DD1112A858D1C00BD323C /* RecurrencePatternBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternBuilder.swift; sourceTree = "<group>"; };
 		918DD1142A858D3800BD323C /* RecurrencePattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePattern.swift; sourceTree = "<group>"; };
@@ -86,18 +82,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		9100C6922A9416CA00C1B506 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9100C6992A9416CA00C1B506 /* DateRecurrencePattern.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		914499812A91721F00228E09 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9144998A2A91721F00228E09 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9144998E2A91721F00228E09 /* DateRecurrencePattern.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +147,8 @@
 		914499932A91721F00228E09 /* DateRecurrencePatternTests */ = {
 			isa = PBXGroup;
 			children = (
-				914499942A91721F00228E09 /* DateRecurrencePatternTests.swift */,
+				9100C68F2A9415BD00C1B506 /* RecurrencePatternBuilderTests.swift */,
+				914499942A91721F00228E09 /* RecurrencePatternExtractorTests.swift */,
 			);
 			path = DateRecurrencePatternTests;
 			sourceTree = "<group>";
@@ -159,6 +156,7 @@
 		918DD0D82A858BB400BD323C = {
 			isa = PBXGroup;
 			children = (
+				9100C6A12A9417BF00C1B506 /* DateRecurrencePattern.xctestplan */,
 				914499742A9170CD00228E09 /* RepeatingDatesPicker */,
 				914499852A91721F00228E09 /* DateRecurrencePattern */,
 				914499932A91721F00228E09 /* DateRecurrencePatternTests */,
@@ -171,7 +169,7 @@
 			children = (
 				918DD0E12A858BB400BD323C /* RepeatingDatesPickerDemo.app */,
 				914499842A91721F00228E09 /* DateRecurrencePattern.framework */,
-				9144998D2A91721F00228E09 /* DateRecurrencePatternTests.xctest */,
+				9100C6952A9416CA00C1B506 /* DateRecurrencePatternTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,6 +188,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		9100C6942A9416CA00C1B506 /* DateRecurrencePatternTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9100C69C2A9416CA00C1B506 /* Build configuration list for PBXNativeTarget "DateRecurrencePatternTests" */;
+			buildPhases = (
+				9100C6912A9416CA00C1B506 /* Sources */,
+				9100C6922A9416CA00C1B506 /* Frameworks */,
+				9100C6932A9416CA00C1B506 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9100C69B2A9416CA00C1B506 /* PBXTargetDependency */,
+			);
+			name = DateRecurrencePatternTests;
+			productName = DateRecurrencePatternTests;
+			productReference = 9100C6952A9416CA00C1B506 /* DateRecurrencePatternTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		914499832A91721F00228E09 /* DateRecurrencePattern */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9144999B2A91721F00228E09 /* Build configuration list for PBXNativeTarget "DateRecurrencePattern" */;
@@ -207,25 +223,6 @@
 			productName = DateRecurrencePattern;
 			productReference = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */;
 			productType = "com.apple.product-type.framework";
-		};
-		9144998C2A91721F00228E09 /* DateRecurrencePatternTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9144999F2A91721F00228E09 /* Build configuration list for PBXNativeTarget "DateRecurrencePatternTests" */;
-			buildPhases = (
-				914499892A91721F00228E09 /* Sources */,
-				9144998A2A91721F00228E09 /* Frameworks */,
-				9144998B2A91721F00228E09 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				914499902A91721F00228E09 /* PBXTargetDependency */,
-				914499922A91721F00228E09 /* PBXTargetDependency */,
-			);
-			name = DateRecurrencePatternTests;
-			productName = DateRecurrencePatternTests;
-			productReference = 9144998D2A91721F00228E09 /* DateRecurrencePatternTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		918DD0E02A858BB400BD323C /* RepeatingDatesPickerDemo */ = {
 			isa = PBXNativeTarget;
@@ -256,12 +253,11 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					914499832A91721F00228E09 = {
+					9100C6942A9416CA00C1B506 = {
 						CreatedOnToolsVersion = 15.0;
 					};
-					9144998C2A91721F00228E09 = {
+					914499832A91721F00228E09 = {
 						CreatedOnToolsVersion = 15.0;
-						TestTargetID = 918DD0E02A858BB400BD323C;
 					};
 					918DD0E02A858BB400BD323C = {
 						CreatedOnToolsVersion = 15.0;
@@ -283,20 +279,20 @@
 			targets = (
 				918DD0E02A858BB400BD323C /* RepeatingDatesPickerDemo */,
 				914499832A91721F00228E09 /* DateRecurrencePattern */,
-				9144998C2A91721F00228E09 /* DateRecurrencePatternTests */,
+				9100C6942A9416CA00C1B506 /* DateRecurrencePatternTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		914499822A91721F00228E09 /* Resources */ = {
+		9100C6932A9416CA00C1B506 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9144998B2A91721F00228E09 /* Resources */ = {
+		914499822A91721F00228E09 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -315,6 +311,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		9100C6912A9416CA00C1B506 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9100C69F2A9416D900C1B506 /* RecurrencePatternBuilderTests.swift in Sources */,
+				9100C6A02A9416DB00C1B506 /* RecurrencePatternExtractorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		914499802A91721F00228E09 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -330,14 +335,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		914499892A91721F00228E09 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				914499952A91721F00228E09 /* DateRecurrencePatternTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		918DD0DD2A858BB400BD323C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -350,15 +347,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		914499902A91721F00228E09 /* PBXTargetDependency */ = {
+		9100C69B2A9416CA00C1B506 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 914499832A91721F00228E09 /* DateRecurrencePattern */;
-			targetProxy = 9144998F2A91721F00228E09 /* PBXContainerItemProxy */;
-		};
-		914499922A91721F00228E09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 918DD0E02A858BB400BD323C /* RepeatingDatesPickerDemo */;
-			targetProxy = 914499912A91721F00228E09 /* PBXContainerItemProxy */;
+			targetProxy = 9100C69A2A9416CA00C1B506 /* PBXContainerItemProxy */;
 		};
 		914499982A91721F00228E09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -368,6 +360,46 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		9100C69D2A9416CA00C1B506 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7KB39F5HB7;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.taki-on.DateRecurrencePatternTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9100C69E2A9416CA00C1B506 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7KB39F5HB7;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.taki-on.DateRecurrencePatternTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		9144999C2A91721F00228E09 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -445,50 +477,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		914499A02A91721F00228E09 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7KB39F5HB7;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MACOSX_DEPLOYMENT_TARGET = 13.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.taki-on.DateRecurrencePatternTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RepeatingDatesPickerDemo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RepeatingDatesPickerDemo";
-			};
-			name = Debug;
-		};
-		914499A12A91721F00228E09 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7KB39F5HB7;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MACOSX_DEPLOYMENT_TARGET = 13.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.taki-on.DateRecurrencePatternTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RepeatingDatesPickerDemo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RepeatingDatesPickerDemo";
 			};
 			name = Release;
 		};
@@ -689,20 +677,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9100C69C2A9416CA00C1B506 /* Build configuration list for PBXNativeTarget "DateRecurrencePatternTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9100C69D2A9416CA00C1B506 /* Debug */,
+				9100C69E2A9416CA00C1B506 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9144999B2A91721F00228E09 /* Build configuration list for PBXNativeTarget "DateRecurrencePattern" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9144999C2A91721F00228E09 /* Debug */,
 				9144999D2A91721F00228E09 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9144999F2A91721F00228E09 /* Build configuration list for PBXNativeTarget "DateRecurrencePatternTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				914499A02A91721F00228E09 /* Debug */,
-				914499A12A91721F00228E09 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

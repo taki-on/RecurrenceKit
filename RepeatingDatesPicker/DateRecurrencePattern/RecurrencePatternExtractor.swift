@@ -5,15 +5,15 @@
 import Foundation
 
 public enum RecurrencePatternExtractor {
-    public func extractDates(from: DateRecurrence) -> [Date] {
+    public static func extractDates(from: DateRecurrence) -> [Date] {
         return []
     }
 
-    public func extractDates(from: DateRecurrence, first: Int) -> [Date] {
+    public static func extractDates(from: DateRecurrence, first: Int) -> [Date] {
         return []
     }
 
-    public func extractDates(from: DateRecurrence, until: Date) -> [Date] {
+    public static func extractDates(from: DateRecurrence, until: Date) -> [Date] {
         return []
     }
 

@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1BC2E9A0-A637-479E-9F9A-9217A6894E82",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:RepeatingDatesPicker.xcodeproj",
+        "identifier" : "9100C6942A9416CA00C1B506",
+        "name" : "DateRecurrencePatternTests"
+      }
+    }
+  ],
+  "version" : 1
+}
