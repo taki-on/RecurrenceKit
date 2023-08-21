@@ -1,7 +1,4 @@
 //
-//  RecurrencePatternExtractor.swift
-//  RepeatingDatesPicker
-//
 //  Created by Taehun Kim on 10.08.23.
 //
 

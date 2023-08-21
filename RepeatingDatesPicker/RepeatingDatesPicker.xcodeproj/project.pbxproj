@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		9100C6882A94087100C1B506 /* DateRecurrence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C6872A94087100C1B506 /* DateRecurrence.swift */; };
+		9100C68A2A94137300C1B506 /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C6892A94137300C1B506 /* WeekDay.swift */; };
+		9100C68C2A94139C00C1B506 /* DailyPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68B2A94139C00C1B506 /* DailyPattern.swift */; };
+		9100C68E2A9413B300C1B506 /* WeeklyPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */; };
 		9144997B2A9170CD00228E09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 914499752A9170CD00228E09 /* Assets.xcassets */; };
 		9144997C2A9170CD00228E09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 914499772A9170CD00228E09 /* Preview Assets.xcassets */; };
 		9144997D2A9170CD00228E09 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499782A9170CD00228E09 /* ContentView.swift */; };
@@ -63,6 +66,9 @@
 
 /* Begin PBXFileReference section */
 		9100C6872A94087100C1B506 /* DateRecurrence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateRecurrence.swift; sourceTree = "<group>"; };
+		9100C6892A94137300C1B506 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
+		9100C68B2A94139C00C1B506 /* DailyPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPattern.swift; sourceTree = "<group>"; };
+		9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPattern.swift; sourceTree = "<group>"; };
 		914499752A9170CD00228E09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		914499772A9170CD00228E09 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		914499782A9170CD00228E09 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -130,6 +136,9 @@
 			isa = PBXGroup;
 			children = (
 				918DD1142A858D3800BD323C /* RecurrencePattern.swift */,
+				9100C68B2A94139C00C1B506 /* DailyPattern.swift */,
+				9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */,
+				9100C6892A94137300C1B506 /* WeekDay.swift */,
 				9100C6872A94087100C1B506 /* DateRecurrence.swift */,
 				918DD1112A858D1C00BD323C /* RecurrencePatternBuilder.swift */,
 				918DD1162A858D5A00BD323C /* RecurrencePatternExtractor.swift */,
@@ -312,6 +321,9 @@
 			files = (
 				914499A22A91723E00228E09 /* RecurrencePattern.swift in Sources */,
 				9100C6882A94087100C1B506 /* DateRecurrence.swift in Sources */,
+				9100C68E2A9413B300C1B506 /* WeeklyPattern.swift in Sources */,
+				9100C68C2A94139C00C1B506 /* DailyPattern.swift in Sources */,
+				9100C68A2A94137300C1B506 /* WeekDay.swift in Sources */,
 				914499882A91721F00228E09 /* DateRecurrencePattern.docc in Sources */,
 				914499A42A91723E00228E09 /* RecurrencePatternExtractor.swift in Sources */,
 				914499A32A91723E00228E09 /* RecurrencePatternBuilder.swift in Sources */,
