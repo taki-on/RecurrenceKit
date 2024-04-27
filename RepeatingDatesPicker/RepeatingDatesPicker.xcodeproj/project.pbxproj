@@ -12,8 +12,8 @@
 		9100C68C2A94139C00C1B506 /* DailyPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68B2A94139C00C1B506 /* DailyPattern.swift */; };
 		9100C68E2A9413B300C1B506 /* WeeklyPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */; };
 		9100C6992A9416CA00C1B506 /* DateRecurrencePattern.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; };
-		9100C69F2A9416D900C1B506 /* RecurrencePatternBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68F2A9415BD00C1B506 /* RecurrencePatternBuilderTests.swift */; };
-		9100C6A02A9416DB00C1B506 /* RecurrencePatternExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499942A91721F00228E09 /* RecurrencePatternExtractorTests.swift */; };
+		9100C69F2A9416D900C1B506 /* PredictionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9100C68F2A9415BD00C1B506 /* PredictionTests.swift */; };
+		9100C6A02A9416DB00C1B506 /* ExtractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499942A91721F00228E09 /* ExtractionTests.swift */; };
 		9144997B2A9170CD00228E09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 914499752A9170CD00228E09 /* Assets.xcassets */; };
 		9144997C2A9170CD00228E09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 914499772A9170CD00228E09 /* Preview Assets.xcassets */; };
 		9144997D2A9170CD00228E09 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914499782A9170CD00228E09 /* ContentView.swift */; };
@@ -23,8 +23,6 @@
 		914499992A91721F00228E09 /* DateRecurrencePattern.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; };
 		9144999A2A91721F00228E09 /* DateRecurrencePattern.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 914499842A91721F00228E09 /* DateRecurrencePattern.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		914499A22A91723E00228E09 /* RecurrencePattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918DD1142A858D3800BD323C /* RecurrencePattern.swift */; };
-		914499A32A91723E00228E09 /* RecurrencePatternBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918DD1112A858D1C00BD323C /* RecurrencePatternBuilder.swift */; };
-		914499A42A91723E00228E09 /* RecurrencePatternExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918DD1162A858D5A00BD323C /* RecurrencePatternExtractor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +61,7 @@
 		9100C6892A94137300C1B506 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
 		9100C68B2A94139C00C1B506 /* DailyPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPattern.swift; sourceTree = "<group>"; };
 		9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPattern.swift; sourceTree = "<group>"; };
-		9100C68F2A9415BD00C1B506 /* RecurrencePatternBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternBuilderTests.swift; sourceTree = "<group>"; };
+		9100C68F2A9415BD00C1B506 /* PredictionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTests.swift; sourceTree = "<group>"; };
 		9100C6952A9416CA00C1B506 /* DateRecurrencePatternTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DateRecurrencePatternTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9100C6A12A9417BF00C1B506 /* DateRecurrencePattern.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DateRecurrencePattern.xctestplan; sourceTree = "<group>"; };
 		914499752A9170CD00228E09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -74,11 +72,9 @@
 		914499842A91721F00228E09 /* DateRecurrencePattern.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DateRecurrencePattern.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		914499862A91721F00228E09 /* DateRecurrencePattern.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateRecurrencePattern.h; sourceTree = "<group>"; };
 		914499872A91721F00228E09 /* DateRecurrencePattern.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DateRecurrencePattern.docc; sourceTree = "<group>"; };
-		914499942A91721F00228E09 /* RecurrencePatternExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternExtractorTests.swift; sourceTree = "<group>"; };
+		914499942A91721F00228E09 /* ExtractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractionTests.swift; sourceTree = "<group>"; };
 		918DD0E12A858BB400BD323C /* RepeatingDatesPickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepeatingDatesPickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		918DD1112A858D1C00BD323C /* RecurrencePatternBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternBuilder.swift; sourceTree = "<group>"; };
 		918DD1142A858D3800BD323C /* RecurrencePattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePattern.swift; sourceTree = "<group>"; };
-		918DD1162A858D5A00BD323C /* RecurrencePatternExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrencePatternExtractor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,8 +132,6 @@
 				9100C68D2A9413B300C1B506 /* WeeklyPattern.swift */,
 				9100C6892A94137300C1B506 /* WeekDay.swift */,
 				9100C6872A94087100C1B506 /* DateRecurrence.swift */,
-				918DD1112A858D1C00BD323C /* RecurrencePatternBuilder.swift */,
-				918DD1162A858D5A00BD323C /* RecurrencePatternExtractor.swift */,
 				914499862A91721F00228E09 /* DateRecurrencePattern.h */,
 				914499872A91721F00228E09 /* DateRecurrencePattern.docc */,
 			);
@@ -147,8 +141,8 @@
 		914499932A91721F00228E09 /* DateRecurrencePatternTests */ = {
 			isa = PBXGroup;
 			children = (
-				9100C68F2A9415BD00C1B506 /* RecurrencePatternBuilderTests.swift */,
-				914499942A91721F00228E09 /* RecurrencePatternExtractorTests.swift */,
+				9100C68F2A9415BD00C1B506 /* PredictionTests.swift */,
+				914499942A91721F00228E09 /* ExtractionTests.swift */,
 			);
 			path = DateRecurrencePatternTests;
 			sourceTree = "<group>";
@@ -315,8 +309,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9100C69F2A9416D900C1B506 /* RecurrencePatternBuilderTests.swift in Sources */,
-				9100C6A02A9416DB00C1B506 /* RecurrencePatternExtractorTests.swift in Sources */,
+				9100C69F2A9416D900C1B506 /* PredictionTests.swift in Sources */,
+				9100C6A02A9416DB00C1B506 /* ExtractionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,8 +324,6 @@
 				9100C68C2A94139C00C1B506 /* DailyPattern.swift in Sources */,
 				9100C68A2A94137300C1B506 /* WeekDay.swift in Sources */,
 				914499882A91721F00228E09 /* DateRecurrencePattern.docc in Sources */,
-				914499A42A91723E00228E09 /* RecurrencePatternExtractor.swift in Sources */,
-				914499A32A91723E00228E09 /* RecurrencePatternBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

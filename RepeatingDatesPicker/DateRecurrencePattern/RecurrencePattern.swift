@@ -26,7 +26,7 @@ public enum RecurrencePattern: Hashable {
         case .weekly(let details):
             return details.extractDates(start: start, end: end)
         case .unknown(let dates):
-            return dates    // TODO: filter out dates
+            return dates.compactMap { ($0 >= start && $0 <= end) ? $0 : nil }
         }
     }
 

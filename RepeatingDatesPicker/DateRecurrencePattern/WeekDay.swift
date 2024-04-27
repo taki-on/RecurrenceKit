@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum WeekDay: Hashable {
+public enum WeekDay: Int, Hashable {
     case monday, tuesday, wednesday, thursday, friday, saturday, sunday
 }
 
