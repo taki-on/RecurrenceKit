@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import DateRecurrencePattern
+@testable import RecurrenceKit
 
 @Suite("WeeklyPattern")
 struct WeeklyPatternTests {

@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "DateRecurrencePattern",
+    name: "RecurrenceKit",
     platforms: [
         .iOS(.v17),
         .macOS(.v14),
@@ -12,15 +12,15 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "DateRecurrencePattern",
-            targets: ["DateRecurrencePattern"]
+            name: "RecurrenceKit",
+            targets: ["RecurrenceKit"]
         ),
     ],
     targets: [
-        .target(name: "DateRecurrencePattern"),
+        .target(name: "RecurrenceKit"),
         .testTarget(
-            name: "DateRecurrencePatternTests",
-            dependencies: ["DateRecurrencePattern"]
+            name: "RecurrenceKitTests",
+            dependencies: ["RecurrenceKit"]
         ),
     ]
 )

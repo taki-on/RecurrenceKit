@@ -1,8 +1,8 @@
-# DateRecurrencePattern
+# RecurrenceKit
 
 A Swift package that detects repeating date patterns from an array of dates and extracts future occurrences.
 
-Given a set of dates, `DateRecurrencePattern` can predict whether they follow a **daily** or **weekly** recurrence pattern, then generate future dates matching that pattern.
+Given a set of dates, `RecurrenceKit` can predict whether they follow a **daily** or **weekly** recurrence pattern, then generate future dates matching that pattern.
 
 ## Installation
 
@@ -10,7 +10,7 @@ Add the package to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/<your-org>/DateRecurrencePattern.git", from: "1.0.0"),
+    .package(url: "https://github.com/<your-org>/RecurrenceKit.git", from: "1.0.0"),
 ]
 ```
 
@@ -21,7 +21,7 @@ Or in Xcode: **File → Add Package Dependencies** and paste the repository URL.
 ### Predict a pattern from dates
 
 ```swift
-import DateRecurrencePattern
+import RecurrenceKit
 
 // Dates that fall on every Monday
 let dates = [
