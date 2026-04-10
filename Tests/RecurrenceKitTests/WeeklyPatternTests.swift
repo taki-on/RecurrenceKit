@@ -64,7 +64,7 @@ struct WeeklyPatternTests {
     }
 
     @Test func predictWeekdays() {
-        // Mon–Fri for two weeks
+        // Mon–Fri for two weeks — still detectable as a WeeklyPattern
         let dates = (1...5).map { makeDate(year: 2024, month: 1, day: $0) }
             + (8...12).map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = WeeklyPattern.predict(from: dates, calendar: calendar)
@@ -74,7 +74,7 @@ struct WeeklyPatternTests {
     }
 
     @Test func predictWeekends() {
-        // Sat–Sun for two weeks
+        // Sat–Sun for two weeks — still detectable as a WeeklyPattern
         let dates = [
             makeDate(year: 2024, month: 1, day: 6),  // Sat
             makeDate(year: 2024, month: 1, day: 7),  // Sun
@@ -107,6 +107,19 @@ struct WeeklyPatternTests {
 
     @Test func predictReturnsNilForEmptyArray() {
         #expect(WeeklyPattern.predict(from: [], calendar: calendar) == nil)
+    }
+
+    @Test func predictHandlesUnsortedInput() {
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 12), // Fri
+            makeDate(year: 2024, month: 1, day: 1),  // Mon
+            makeDate(year: 2024, month: 1, day: 8),  // Mon
+            makeDate(year: 2024, month: 1, day: 5),  // Fri
+            makeDate(year: 2024, month: 1, day: 10), // Wed
+            makeDate(year: 2024, month: 1, day: 3),  // Wed
+        ]
+        let pattern = WeeklyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == WeeklyPattern(stepSize: 1, weekDays: [.monday, .wednesday, .friday]))
     }
 
     // MARK: - Extraction by range

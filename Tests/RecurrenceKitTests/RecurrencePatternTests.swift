@@ -27,6 +27,45 @@ struct RecurrencePatternTests {
         #expect(pattern == .daily(DailyPattern(interval: 1)))
     }
 
+    @Test func predictDetectsWeekdays() {
+        // Mon–Fri for two weeks
+        let dates = (1...5).map { makeDate(year: 2024, month: 1, day: $0) }
+            + (8...12).map { makeDate(year: 2024, month: 1, day: $0) }
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .weekdays(WeekdaysPattern(stepSize: 1)))
+    }
+
+    @Test func predictDetectsBiweeklyWeekdays() {
+        // Mon–Fri, then skip a week, then Mon–Fri
+        let dates = (1...5).map { makeDate(year: 2024, month: 1, day: $0) }
+            + (15...19).map { makeDate(year: 2024, month: 1, day: $0) }
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .weekdays(WeekdaysPattern(stepSize: 2)))
+    }
+
+    @Test func predictDetectsWeekends() {
+        // Sat–Sun for two weeks
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 6),  // Sat
+            makeDate(year: 2024, month: 1, day: 7),  // Sun
+            makeDate(year: 2024, month: 1, day: 13), // Sat
+            makeDate(year: 2024, month: 1, day: 14), // Sun
+        ]
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .weekends(WeekendsPattern(stepSize: 1)))
+    }
+
+    @Test func predictDetectsBiweeklyWeekends() {
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 6),  // Sat
+            makeDate(year: 2024, month: 1, day: 7),  // Sun
+            makeDate(year: 2024, month: 1, day: 20), // Sat (2 weeks later)
+            makeDate(year: 2024, month: 1, day: 21), // Sun
+        ]
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .weekends(WeekendsPattern(stepSize: 2)))
+    }
+
     @Test func predictFallsBackToUnknown() {
         let dates = [1, 2, 5, 10].map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)

@@ -72,11 +72,14 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
     ///
     /// Returns a `WeeklyPattern` if the dates fall on consistent weekdays with
     /// a uniform week-step between groups, or `nil` if no weekly pattern is found.
+    ///
+    /// Dates are normalized to start-of-day and deduplicated before analysis.
+    /// An incomplete trailing week (fewer dates than previous weeks) is allowed.
     public static func predict(
         from dates: [Date],
         calendar: Calendar = .current
     ) -> WeeklyPattern? {
-        let sorted = dates.sorted()
+        let sorted = dates.normalizedForPrediction(calendar: calendar)
         guard sorted.count >= 2 else { return nil }
 
         // Group dates by their weekday
@@ -86,21 +89,46 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
             datesByWeekday[weekday, default: []].append(date)
         }
 
-        // All weekdays must have the same number of dates
-        let counts = Set(datesByWeekday.values.map(\.count))
-        guard counts.count == 1 else { return nil }
+        // All weekday groups must have the same count, or some may have
+        // exactly one fewer date (an incomplete trailing week).
+        let counts = datesByWeekday.values.map(\.count)
+        guard let maxCount = counts.max() else { return nil }
+        let allValid = counts.allSatisfy { $0 == maxCount || $0 == maxCount - 1 }
+        guard allValid, maxCount >= 2 else {
+            // Need at least one weekday with 2+ dates for step derivation.
+            // When all have count 1 we can't determine step size.
+            return nil
+        }
 
-        // Determine step size from week-of-year gaps
+        // If there's a trailing incomplete week, verify the "short" weekdays
+        // correspond to later-in-week days (they are the ones missing from the
+        // final week). We do this by checking that every short-count weekday's
+        // last date is earlier than every full-count weekday's last date.
+        if counts.contains(maxCount - 1) {
+            let fullWeekdayLastDates = datesByWeekday
+                .filter { $0.value.count == maxCount }
+                .values.map { $0.last! }
+            let shortWeekdayLastDates = datesByWeekday
+                .filter { $0.value.count == maxCount - 1 }
+                .values.map { $0.last! }
+
+            guard let latestShort = shortWeekdayLastDates.max(),
+                  let earliestFull = fullWeekdayLastDates.min() else { return nil }
+            guard latestShort < earliestFull else { return nil }
+        }
+
+        // Determine step size using day-based calculation (robust across year boundaries).
         var stepSize: Int?
         for weekdayDates in datesByWeekday.values {
             guard weekdayDates.count >= 2 else { continue }
             for i in 1..<weekdayDates.count {
-                let weeks = calendar.dateComponents(
-                    [.weekOfYear],
+                let dayDiff = calendar.dateComponents(
+                    [.day],
                     from: weekdayDates[i - 1],
                     to: weekdayDates[i]
-                ).weekOfYear
-                guard let weeks, weeks > 0 else { return nil }
+                ).day
+                guard let dayDiff, dayDiff > 0, dayDiff.isMultiple(of: 7) else { return nil }
+                let weeks = dayDiff / 7
 
                 if let existing = stepSize {
                     guard existing == weeks else { return nil }
@@ -110,8 +138,6 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
             }
         }
 
-        // If every weekday has only one date, we can't determine step size from gaps.
-        // Require at least one weekday with 2+ dates so we can derive the step.
         guard let stepSize else { return nil }
 
         let weekDays = datesByWeekday.keys

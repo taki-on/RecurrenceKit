@@ -46,11 +46,13 @@ public struct DailyPattern: Codable, Hashable, Sendable {
     ///
     /// Returns a `DailyPattern` if all consecutive dates are separated by the same
     /// number of days, or `nil` if no consistent interval is found.
+    ///
+    /// Dates are normalized to start-of-day and deduplicated before analysis.
     public static func predict(
         from dates: [Date],
         calendar: Calendar = .current
     ) -> DailyPattern? {
-        let sorted = dates.sorted()
+        let sorted = dates.normalizedForPrediction(calendar: calendar)
         guard sorted.count >= 2 else { return nil }
 
         var expectedInterval: Int?

@@ -3,6 +3,8 @@ import Foundation
 /// Represents a detected or specified recurrence pattern for dates.
 public enum RecurrencePattern: Codable, Hashable, Sendable {
     case daily(DailyPattern)
+    case weekdays(WeekdaysPattern)
+    case weekends(WeekendsPattern)
     case weekly(WeeklyPattern)
     // TODO: case monthly(MonthlyPattern)
     case unknown([Date])
@@ -11,6 +13,8 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
     public var recommendedExtractionCount: Int {
         switch self {
         case .daily: 10
+        case .weekdays: 10
+        case .weekends: 10
         case .weekly: 10
         case .unknown(let dates): dates.count
         }
@@ -18,13 +22,17 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
 
     /// Attempts to detect a recurrence pattern from an array of dates.
     ///
-    /// Tries weekly first (more specific), then daily. Falls back to `.unknown`
-    /// if no pattern is detected.
+    /// Tries the most specific patterns first (weekdays/weekends), then weekly,
+    /// then daily. Falls back to `.unknown` if no pattern is detected.
     public static func predict(
         from dates: [Date],
         calendar: Calendar = .current
     ) -> RecurrencePattern {
-        if let pattern = WeeklyPattern.predict(from: dates, calendar: calendar) {
+        if let pattern = WeekdaysPattern.predict(from: dates, calendar: calendar) {
+            return .weekdays(pattern)
+        } else if let pattern = WeekendsPattern.predict(from: dates, calendar: calendar) {
+            return .weekends(pattern)
+        } else if let pattern = WeeklyPattern.predict(from: dates, calendar: calendar) {
             return .weekly(pattern)
         } else if let pattern = DailyPattern.predict(from: dates, calendar: calendar) {
             return .daily(pattern)
@@ -41,6 +49,10 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
         switch self {
         case .daily(let pattern):
             pattern.extractDates(start: start, end: end, calendar: calendar)
+        case .weekdays(let pattern):
+            pattern.extractDates(start: start, end: end, calendar: calendar)
+        case .weekends(let pattern):
+            pattern.extractDates(start: start, end: end, calendar: calendar)
         case .weekly(let pattern):
             pattern.extractDates(start: start, end: end, calendar: calendar)
         case .unknown(let dates):
@@ -56,6 +68,10 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
     ) -> [Date] {
         switch self {
         case .daily(let pattern):
+            pattern.extractDates(start: start, first: count, calendar: calendar)
+        case .weekdays(let pattern):
+            pattern.extractDates(start: start, first: count, calendar: calendar)
+        case .weekends(let pattern):
             pattern.extractDates(start: start, first: count, calendar: calendar)
         case .weekly(let pattern):
             pattern.extractDates(start: start, first: count, calendar: calendar)
