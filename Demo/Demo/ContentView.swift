@@ -11,27 +11,37 @@ struct ContentView: View {
             .sorted()
     }
 
+    private var detected: Bool { sortedDates.count >= 2 }
+
     private var patternDescription: String {
         let dates = sortedDates
         guard dates.count >= 2 else {
-            return dates.isEmpty ? "Select dates" : "Select more dates"
+            return dates.isEmpty
+                ? "Tap dates to detect a pattern"
+                : "Select at least one more date"
         }
-        let pattern = RecurrencePattern.predict(from: dates)
-        return pattern.description
+        return RecurrencePattern.predict(from: dates).description
     }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                patternLabel
-                calendarView
+            List {
+                Section {
+                    patternLabel
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                }
+
+                Section {
+                    MultiDateCalendarView(selectedDates: $selectedDates)
+                        .listRowInsets(EdgeInsets())
+                }
             }
             .navigationTitle("RecurrenceKit")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Clear") {
-                        selectedDates.removeAll()
+                        withAnimation { selectedDates.removeAll() }
                     }
                     .disabled(selectedDates.isEmpty)
                 }
@@ -41,16 +51,17 @@ struct ContentView: View {
 
     private var patternLabel: some View {
         Text(patternDescription)
-            .font(sortedDates.count >= 2 ? .headline : .subheadline)
-            .foregroundStyle(sortedDates.count >= 2 ? .primary : .secondary)
+            .font(detected ? .title3.weight(.semibold) : .subheadline)
+            .foregroundStyle(detected ? .primary : .secondary)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(.ultraThinMaterial)
-            .animation(.default, value: patternDescription)
-    }
-
-    private var calendarView: some View {
-        MultiDateCalendarView(selectedDates: $selectedDates)
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.background)
+            }
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
+            .contentTransition(.numericText())
+            .animation(.smooth, value: patternDescription)
     }
 }
 
