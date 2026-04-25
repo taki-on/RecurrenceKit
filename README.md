@@ -6,6 +6,10 @@ Given a set of dates, `RecurrenceKit` predicts whether they follow a **daily**, 
 
 All types are `Sendable`, `Codable`, and `Hashable` — fully compatible with Swift 6 strict concurrency.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e1d4b436-bd01-4562-8e18-c4d5c5ab414e" alt="RecurrenceKit Demo" width="300">
+</p>
+
 ## Installation
 
 ### Swift Package Manager

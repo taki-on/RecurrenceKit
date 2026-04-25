@@ -135,9 +135,6 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         if let anchor = detectLastDay(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
-        if let anchor = detectDaysOfMonth(groups, calendar: calendar) {
-            return MonthlyPattern(stepSize: stepSize, anchor: anchor)
-        }
         if let anchor = detectWeekendOrdinals(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
@@ -145,6 +142,9 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
         if let anchor = detectWeekdayOrdinals(groups, calendar: calendar) {
+            return MonthlyPattern(stepSize: stepSize, anchor: anchor)
+        }
+        if let anchor = detectDaysOfMonth(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
 
@@ -377,6 +377,15 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
             } else {
                 guard set == maxSet else { return nil }
             }
+        }
+
+        // If all dates share the same day-of-month, prefer daysOfMonth
+        // (simpler anchor). Only match weekdayOrdinals when the day numbers
+        // actually vary across months.
+        let dayNumbers = Set(allDates.map { calendar.component(.day, from: $0) })
+        if dayNumbers.count == maxSet.count {
+            // Same day numbers every month — daysOfMonth is the better fit.
+            return nil
         }
 
         return .weekdayOrdinals(ordinals: maxSet.sorted(), weekDay: wd)
