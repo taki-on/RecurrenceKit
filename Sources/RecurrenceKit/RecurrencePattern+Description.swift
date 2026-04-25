@@ -14,6 +14,8 @@ extension RecurrencePattern: CustomStringConvertible {
             p.recurrenceDescription
         case .monthly(let p):
             p.recurrenceDescription
+        case .yearly(let p):
+            p.recurrenceDescription
         case .unknown:
             "No pattern detected"
         }
@@ -93,8 +95,22 @@ extension MonthlyPattern {
                     .formatted(.list(type: .and))
                 anchorText = "on the \(dayList)"
             }
-        case .weekdayOrdinal(let ordinal, let weekDay):
-            anchorText = "on the \(ordinalString(ordinal)) \(weekDay)"
+        case .weekdayOrdinals(let ordinals, let weekDay):
+            if ordinals.count == 1 {
+                anchorText = "on the \(ordinalString(ordinals[0])) \(weekDay)"
+            } else {
+                let list = ordinals.map { ordinalString($0) }
+                    .formatted(.list(type: .and))
+                anchorText = "on the \(list) \(weekDay)"
+            }
+        case .weekendOrdinals(let ordinals):
+            if ordinals.count == 1 {
+                anchorText = "on the \(ordinalString(ordinals[0])) weekend"
+            } else {
+                let list = ordinals.map { ordinalString($0) }
+                    .formatted(.list(type: .and))
+                anchorText = "on the \(list) weekends"
+            }
         case .lastDay:
             anchorText = "on the last day"
         case .lastWeekday(let weekDay):
@@ -119,5 +135,55 @@ extension MonthlyPattern {
             }
         }
         return "\(n)\(suffix)"
+    }
+}
+
+extension YearlyPattern {
+    var recurrenceDescription: String {
+        let frequency: String
+        switch stepSize {
+        case 1: frequency = "Every year"
+        case 2: frequency = "Every other year"
+        default: frequency = "Every \(stepSize) years"
+        }
+
+        let monthName = Self.monthName(month)
+
+        let anchorText: String
+        switch anchor {
+        case .dayOfMonth(let day):
+            anchorText = "on \(monthName) \(ordinalString(day))"
+        case .weekdayOrdinal(let ordinal, let weekDay):
+            anchorText = "on the \(ordinalString(ordinal)) \(weekDay) of \(monthName)"
+        case .lastDay:
+            anchorText = "on the last day of \(monthName)"
+        case .lastWeekday(let weekDay):
+            anchorText = "on the last \(weekDay) of \(monthName)"
+        }
+
+        return "\(frequency) \(anchorText)"
+    }
+
+    private func ordinalString(_ n: Int) -> String {
+        let suffix: String
+        let ones = n % 10
+        let tens = (n / 10) % 10
+        if tens == 1 {
+            suffix = "th"
+        } else {
+            switch ones {
+            case 1: suffix = "st"
+            case 2: suffix = "nd"
+            case 3: suffix = "rd"
+            default: suffix = "th"
+            }
+        }
+        return "\(n)\(suffix)"
+    }
+
+    private static func monthName(_ month: Int) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        return formatter.monthSymbols[month - 1]
     }
 }

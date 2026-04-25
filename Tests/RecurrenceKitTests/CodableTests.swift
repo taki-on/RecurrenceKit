@@ -53,7 +53,7 @@ struct CodableTests {
     }
 
     @Test func monthlyWeekdayOrdinalCodable() throws {
-        let pattern = MonthlyPattern(stepSize: 2, anchor: .weekdayOrdinal(ordinal: 3, weekDay: .friday))
+        let pattern = MonthlyPattern(stepSize: 2, anchor: .weekdayOrdinals(ordinals: [3], weekDay: .friday))
         let data = try JSONEncoder().encode(pattern)
         let decoded = try JSONDecoder().decode(MonthlyPattern.self, from: data)
         #expect(decoded == pattern)

@@ -9,9 +9,14 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         /// clamped to the last valid day for shorter months.
         case daysOfMonth([Int])
 
-        /// The Nth occurrence of a weekday (e.g., the 2nd Tuesday).
-        /// `ordinal` is 1-based.
-        case weekdayOrdinal(ordinal: Int, weekDay: WeekDay)
+        /// The Nth occurrences of a weekday (e.g., the 1st and 3rd Friday).
+        /// Ordinals are 1-based and sorted.
+        case weekdayOrdinals(ordinals: [Int], weekDay: WeekDay)
+
+        /// The Nth weekend(s) of the month (e.g., the 1st and 3rd weekends).
+        /// Each ordinal produces a Saturday–Sunday pair, keyed off the
+        /// Saturday's position. Ordinals are 1-based and sorted.
+        case weekendOrdinals([Int])
 
         /// The last day of the month.
         case lastDay
@@ -30,6 +35,9 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         precondition(stepSize > 0, "Step size must be positive")
         if case .daysOfMonth(let days) = anchor {
             precondition(!days.isEmpty, "Must have at least one day")
+        }
+        if case .weekendOrdinals(let ordinals) = anchor {
+            precondition(!ordinals.isEmpty, "Must have at least one weekend ordinal")
         }
         self.stepSize = stepSize
         self.anchor = anchor
@@ -130,10 +138,13 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         if let anchor = detectDaysOfMonth(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
+        if let anchor = detectWeekendOrdinals(groups, calendar: calendar) {
+            return MonthlyPattern(stepSize: stepSize, anchor: anchor)
+        }
         if let anchor = detectLastWeekday(sorted, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
-        if let anchor = detectWeekdayOrdinal(sorted, calendar: calendar) {
+        if let anchor = detectWeekdayOrdinals(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
 
@@ -150,14 +161,18 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
                 dateForDayOfMonth(day, year: year, month: month, calendar: calendar)
             }
 
-        case .weekdayOrdinal(let ordinal, let weekDay):
-            if let d = dateForWeekdayOrdinal(
-                ordinal: ordinal, weekDay: weekDay,
-                year: year, month: month, calendar: calendar
-            ) {
-                return [d]
+        case .weekdayOrdinals(let ordinals, let weekDay):
+            return ordinals.sorted().compactMap { ordinal in
+                dateForWeekdayOrdinal(
+                    ordinal: ordinal, weekDay: weekDay,
+                    year: year, month: month, calendar: calendar
+                )
             }
-            return []
+
+        case .weekendOrdinals(let ordinals):
+            return datesForWeekendOrdinals(
+                ordinals, year: year, month: month, calendar: calendar
+            )
 
         case .lastDay:
             if let d = dateForLastDay(year: year, month: month, calendar: calendar) {
@@ -209,6 +224,30 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         comps.weekday = weekDay.rawValue
         comps.weekdayOrdinal = -1
         return calendar.date(from: comps)
+    }
+
+    /// Returns Saturday+Sunday pairs for the given weekend ordinals in a month.
+    private func datesForWeekendOrdinals(
+        _ ordinals: [Int], year: Int, month: Int, calendar: Calendar
+    ) -> [Date] {
+        var dates: [Date] = []
+        for ordinal in ordinals.sorted() {
+            // Find the Nth Saturday.
+            var satComps = DateComponents(year: year, month: month)
+            satComps.weekday = WeekDay.saturday.rawValue
+            satComps.weekdayOrdinal = ordinal
+            guard let saturday = calendar.date(from: satComps) else { continue }
+
+            // Verify the Saturday is still in the target month.
+            guard calendar.component(.month, from: saturday) == month else { continue }
+            dates.append(saturday)
+
+            // The Sunday following this Saturday.
+            if let sunday = calendar.date(byAdding: .day, value: 1, to: saturday) {
+                dates.append(sunday)
+            }
+        }
+        return dates
     }
 
     // MARK: - Prediction Helpers
@@ -309,30 +348,38 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         return .lastDay
     }
 
-    private static func detectWeekdayOrdinal(
-        _ dates: [Date], calendar: Calendar
+    private static func detectWeekdayOrdinals(
+        _ groups: [MonthGroup], calendar: Calendar
     ) -> Anchor? {
-        var expectedWeekday: Int?
-        var expectedOrdinal: Int?
-
-        for date in dates {
-            let weekday = calendar.component(.weekday, from: date)
-            let ordinal = calendar.component(.weekdayOrdinal, from: date)
-
-            if let ew = expectedWeekday, let eo = expectedOrdinal {
-                guard weekday == ew, ordinal == eo else { return nil }
-            } else {
-                expectedWeekday = weekday
-                expectedOrdinal = ordinal
-            }
-        }
-
-        guard let weekday = expectedWeekday,
-              let ordinal = expectedOrdinal,
+        // All dates must be the same weekday.
+        let allDates = groups.flatMap(\.dates)
+        let weekdays = Set(allDates.map { calendar.component(.weekday, from: $0) })
+        guard weekdays.count == 1, let weekday = weekdays.first,
               let wd = WeekDay(rawValue: weekday) else {
             return nil
         }
-        return .weekdayOrdinal(ordinal: ordinal, weekDay: wd)
+
+        // For each month group, collect the ordinal set.
+        var ordinalSets: [Set<Int>] = []
+        for group in groups {
+            let ordinals = Set(group.dates.map {
+                calendar.component(.weekdayOrdinal, from: $0)
+            })
+            ordinalSets.append(ordinals)
+        }
+
+        guard let maxSet = ordinalSets.max(by: { $0.count < $1.count }) else { return nil }
+
+        // All groups must match, or last may be trailing (subset).
+        for (i, set) in ordinalSets.enumerated() {
+            if i == ordinalSets.count - 1 {
+                guard set.isSubset(of: maxSet) else { return nil }
+            } else {
+                guard set == maxSet else { return nil }
+            }
+        }
+
+        return .weekdayOrdinals(ordinals: maxSet.sorted(), weekDay: wd)
     }
 
     private static func detectLastWeekday(
@@ -361,5 +408,68 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
             return nil
         }
         return .lastWeekday(wd)
+    }
+
+    private static func detectWeekendOrdinals(
+        _ groups: [MonthGroup], calendar: Calendar
+    ) -> Anchor? {
+        // All dates must be Saturday or Sunday.
+        let allDates = groups.flatMap(\.dates)
+        guard allDates.allSatisfy({
+            let wd = calendar.component(.weekday, from: $0)
+            return wd == WeekDay.saturday.rawValue || wd == WeekDay.sunday.rawValue
+        }) else {
+            return nil
+        }
+
+        // For each month group, determine the set of weekend ordinals.
+        // A weekend ordinal is the Saturday's weekdayOrdinal value.
+        var ordinalSets: [Set<Int>] = []
+        for group in groups {
+            var ordinals = Set<Int>()
+            for date in group.dates {
+                let wd = calendar.component(.weekday, from: date)
+                if wd == WeekDay.saturday.rawValue {
+                    let ord = calendar.component(.weekdayOrdinal, from: date)
+                    ordinals.insert(ord)
+                } else {
+                    // Sunday: its weekend ordinal is the preceding Saturday's ordinal.
+                    // The preceding Saturday is 1 day before.
+                    guard let saturday = calendar.date(byAdding: .day, value: -1, to: date) else {
+                        return nil
+                    }
+                    // Verify the Saturday is in the same month or simply use
+                    // its ordinal if it's a valid Saturday.
+                    guard calendar.component(.weekday, from: saturday) == WeekDay.saturday.rawValue else {
+                        return nil
+                    }
+                    let ord = calendar.component(.weekdayOrdinal, from: saturday)
+                    ordinals.insert(ord)
+                }
+            }
+            ordinalSets.append(ordinals)
+        }
+
+        guard let maxSet = ordinalSets.max(by: { $0.count < $1.count }) else { return nil }
+
+        // All groups must match, or last group may be trailing (subset).
+        for (i, set) in ordinalSets.enumerated() {
+            if i == ordinalSets.count - 1 {
+                guard set.isSubset(of: maxSet) else { return nil }
+            } else {
+                guard set == maxSet else { return nil }
+            }
+        }
+
+        // Each full group must have exactly 2 dates per weekend ordinal
+        // (Sat + Sun), or trailing may have fewer.
+        let expectedCount = maxSet.count * 2
+        for (i, group) in groups.enumerated() {
+            if i < groups.count - 1 {
+                guard group.dates.count == expectedCount else { return nil }
+            }
+        }
+
+        return .weekendOrdinals(maxSet.sorted())
     }
 }

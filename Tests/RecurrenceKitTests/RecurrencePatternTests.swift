@@ -98,7 +98,7 @@ struct RecurrencePatternTests {
         let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
         #expect(pattern == .monthly(MonthlyPattern(
             stepSize: 1,
-            anchor: .weekdayOrdinal(ordinal: 2, weekDay: .tuesday)
+            anchor: .weekdayOrdinals(ordinals: [2], weekDay: .tuesday)
         )))
     }
 

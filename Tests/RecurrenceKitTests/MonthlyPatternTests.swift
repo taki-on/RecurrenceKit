@@ -75,7 +75,7 @@ struct MonthlyPatternTests {
             makeDate(year: 2024, month: 3, day: 12),   // 2nd Tue
         ]
         let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinal(ordinal: 2, weekDay: .tuesday)))
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinals(ordinals: [2], weekDay: .tuesday)))
     }
 
     @Test func predictFirstMonday() {
@@ -86,7 +86,7 @@ struct MonthlyPatternTests {
             makeDate(year: 2024, month: 3, day: 4),    // 1st Mon
         ]
         let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinal(ordinal: 1, weekDay: .monday)))
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinals(ordinals: [1], weekDay: .monday)))
     }
 
     @Test func predictThirdFridayBimonthly() {
@@ -97,7 +97,7 @@ struct MonthlyPatternTests {
             makeDate(year: 2024, month: 5, day: 17),   // 3rd Fri
         ]
         let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == MonthlyPattern(stepSize: 2, anchor: .weekdayOrdinal(ordinal: 3, weekDay: .friday)))
+        #expect(pattern == MonthlyPattern(stepSize: 2, anchor: .weekdayOrdinals(ordinals: [3], weekDay: .friday)))
     }
 
     // MARK: - Prediction: lastWeekday
@@ -206,7 +206,7 @@ struct MonthlyPatternTests {
     // MARK: - Extraction by range: weekdayOrdinal
 
     @Test func extractSecondTuesdayInRange() {
-        let pattern = MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinal(ordinal: 2, weekDay: .tuesday))
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinals(ordinals: [2], weekDay: .tuesday))
         let start = makeDate(year: 2024, month: 1, day: 1)
         let end = makeDate(year: 2024, month: 3, day: 31)
         let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
@@ -332,7 +332,7 @@ struct MonthlyPatternTests {
 
     @Test func descriptionWeekdayOrdinal() {
         let pattern = RecurrencePattern.monthly(
-            MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinal(ordinal: 2, weekDay: .tuesday))
+            MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinals(ordinals: [2], weekDay: .tuesday))
         )
         #expect(pattern.description == "Every month on the 2nd Tuesday")
     }
@@ -481,5 +481,190 @@ struct MonthlyPatternTests {
             MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([1, 10, 20]))
         )
         #expect(pattern.description == "Every month on the 1st, 10th, and 20th")
+    }
+
+    // MARK: - Multi-ordinal weekday prediction
+
+    @Test func predictFirstAndThirdFriday() {
+        // 1st Friday: Jan 5, Feb 2, Mar 1; 3rd Friday: Jan 19, Feb 16, Mar 15
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 5),   // 1st Fri
+            makeDate(year: 2024, month: 1, day: 19),  // 3rd Fri
+            makeDate(year: 2024, month: 2, day: 2),   // 1st Fri
+            makeDate(year: 2024, month: 2, day: 16),  // 3rd Fri
+            makeDate(year: 2024, month: 3, day: 1),   // 1st Fri
+            makeDate(year: 2024, month: 3, day: 15),  // 3rd Fri
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(
+            stepSize: 1, anchor: .weekdayOrdinals(ordinals: [1, 3], weekDay: .friday)
+        ))
+    }
+
+    @Test func predictFirstAndSecondMonday() {
+        // 1st Mon: Jan 1, Feb 5; 2nd Mon: Jan 8, Feb 12
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 1),   // 1st Mon
+            makeDate(year: 2024, month: 1, day: 8),   // 2nd Mon
+            makeDate(year: 2024, month: 2, day: 5),   // 1st Mon
+            makeDate(year: 2024, month: 2, day: 12),  // 2nd Mon
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(
+            stepSize: 1, anchor: .weekdayOrdinals(ordinals: [1, 2], weekDay: .monday)
+        ))
+    }
+
+    @Test func predictMultiOrdinalWeekdayWithTrailing() {
+        // 1st and 3rd Fri of Jan, Feb; only 1st Fri of Mar (trailing)
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 5),   // 1st Fri
+            makeDate(year: 2024, month: 1, day: 19),  // 3rd Fri
+            makeDate(year: 2024, month: 2, day: 2),   // 1st Fri
+            makeDate(year: 2024, month: 2, day: 16),  // 3rd Fri
+            makeDate(year: 2024, month: 3, day: 1),   // 1st Fri (trailing)
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(
+            stepSize: 1, anchor: .weekdayOrdinals(ordinals: [1, 3], weekDay: .friday)
+        ))
+    }
+
+    // MARK: - Multi-ordinal weekday extraction
+
+    @Test func extractFirstAndThirdFridayByCount() {
+        let pattern = MonthlyPattern(
+            stepSize: 1, anchor: .weekdayOrdinals(ordinals: [1, 3], weekDay: .friday)
+        )
+        let start = makeDate(year: 2024, month: 1, day: 1)
+        let dates = pattern.extractDates(start: start, first: 6, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 1, day: 5),   // 1st Fri
+            makeDate(year: 2024, month: 1, day: 19),  // 3rd Fri
+            makeDate(year: 2024, month: 2, day: 2),   // 1st Fri
+            makeDate(year: 2024, month: 2, day: 16),  // 3rd Fri
+            makeDate(year: 2024, month: 3, day: 1),   // 1st Fri
+            makeDate(year: 2024, month: 3, day: 15),  // 3rd Fri
+        ])
+    }
+
+    // MARK: - Multi-ordinal weekday description
+
+    @Test func descriptionFirstAndThirdFriday() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 1, anchor: .weekdayOrdinals(ordinals: [1, 3], weekDay: .friday))
+        )
+        #expect(pattern.description == "Every month on the 1st and 3rd Friday")
+    }
+
+    // MARK: - Weekend ordinal prediction
+
+    @Test func predictFirstWeekend() {
+        // 1st weekend of Jan (6-7), Feb (3-4), Mar (2-3) 2024
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 6),  // Sat
+            makeDate(year: 2024, month: 1, day: 7),  // Sun
+            makeDate(year: 2024, month: 2, day: 3),  // Sat
+            makeDate(year: 2024, month: 2, day: 4),  // Sun
+            makeDate(year: 2024, month: 3, day: 2),  // Sat
+            makeDate(year: 2024, month: 3, day: 3),  // Sun
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1])))
+    }
+
+    @Test func predictThirdWeekend() {
+        // 3rd weekend of Jan (20-21), Feb (17-18), Mar (16-17) 2024
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 20), // Sat
+            makeDate(year: 2024, month: 1, day: 21), // Sun
+            makeDate(year: 2024, month: 2, day: 17), // Sat
+            makeDate(year: 2024, month: 2, day: 18), // Sun
+            makeDate(year: 2024, month: 3, day: 16), // Sat
+            makeDate(year: 2024, month: 3, day: 17), // Sun
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([3])))
+    }
+
+    @Test func predictFirstAndThirdWeekends() {
+        // 1st and 3rd weekends of Jan and Feb 2024
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 6),  // 1st Sat
+            makeDate(year: 2024, month: 1, day: 7),  // 1st Sun
+            makeDate(year: 2024, month: 1, day: 20), // 3rd Sat
+            makeDate(year: 2024, month: 1, day: 21), // 3rd Sun
+            makeDate(year: 2024, month: 2, day: 3),  // 1st Sat
+            makeDate(year: 2024, month: 2, day: 4),  // 1st Sun
+            makeDate(year: 2024, month: 2, day: 17), // 3rd Sat
+            makeDate(year: 2024, month: 2, day: 18), // 3rd Sun
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1, 3])))
+    }
+
+    @Test func predictWeekendOrdinalsWithTrailingMonth() {
+        // 1st weekend of Jan, Feb; only Saturday of Mar (trailing)
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 6),  // Sat
+            makeDate(year: 2024, month: 1, day: 7),  // Sun
+            makeDate(year: 2024, month: 2, day: 3),  // Sat
+            makeDate(year: 2024, month: 2, day: 4),  // Sun
+            makeDate(year: 2024, month: 3, day: 2),  // Sat (trailing)
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1])))
+    }
+
+    // MARK: - Weekend ordinal extraction
+
+    @Test func extractFirstWeekendByCount() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1]))
+        let start = makeDate(year: 2024, month: 1, day: 1)
+        let dates = pattern.extractDates(start: start, first: 6, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 1, day: 6),  // Sat
+            makeDate(year: 2024, month: 1, day: 7),  // Sun
+            makeDate(year: 2024, month: 2, day: 3),  // Sat
+            makeDate(year: 2024, month: 2, day: 4),  // Sun
+            makeDate(year: 2024, month: 3, day: 2),  // Sat
+            makeDate(year: 2024, month: 3, day: 3),  // Sun
+        ])
+    }
+
+    @Test func extractFirstAndThirdWeekendsByRange() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1, 3]))
+        let start = makeDate(year: 2024, month: 1, day: 1)
+        let end = makeDate(year: 2024, month: 1, day: 31)
+        let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 1, day: 6),  // 1st Sat
+            makeDate(year: 2024, month: 1, day: 7),  // 1st Sun
+            makeDate(year: 2024, month: 1, day: 20), // 3rd Sat
+            makeDate(year: 2024, month: 1, day: 21), // 3rd Sun
+        ])
+    }
+
+    // MARK: - Weekend ordinal description
+
+    @Test func descriptionFirstWeekend() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1]))
+        )
+        #expect(pattern.description == "Every month on the 1st weekend")
+    }
+
+    @Test func descriptionFirstAndThirdWeekends() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 1, anchor: .weekendOrdinals([1, 3]))
+        )
+        #expect(pattern.description == "Every month on the 1st and 3rd weekends")
+    }
+
+    @Test func descriptionSecondWeekendBimonthly() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 2, anchor: .weekendOrdinals([2]))
+        )
+        #expect(pattern.description == "Every other month on the 2nd weekend")
     }
 }
