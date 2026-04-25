@@ -54,7 +54,7 @@ struct PredictionEdgeCaseTests {
             makeDate(year: 2024, month: 1, day: 4, hour: 7, minute: 0),
         ]
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 1))
+        #expect(pattern == DailyPattern(stepSize: 1))
     }
 
     @Test func dailyEveryOtherDayWithDifferentTimes() {
@@ -64,7 +64,7 @@ struct PredictionEdgeCaseTests {
             makeDate(year: 2024, month: 1, day: 5, hour: 12, minute: 0),
         ]
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 2))
+        #expect(pattern == DailyPattern(stepSize: 2))
     }
 
     @Test func weeklyWithDifferentTimes() {
@@ -88,7 +88,7 @@ struct PredictionEdgeCaseTests {
             makeDate(year: 2024, month: 1, day: 3),
         ]
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 1))
+        #expect(pattern == DailyPattern(stepSize: 1))
     }
 
     @Test func dailyWithSameDayDifferentTimes() {
@@ -100,7 +100,7 @@ struct PredictionEdgeCaseTests {
             makeDate(year: 2024, month: 1, day: 3, hour: 11, minute: 0),
         ]
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 1))
+        #expect(pattern == DailyPattern(stepSize: 1))
     }
 
     @Test func weeklyWithDuplicates() {

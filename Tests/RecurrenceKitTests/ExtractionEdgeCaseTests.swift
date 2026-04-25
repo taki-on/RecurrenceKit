@@ -10,7 +10,7 @@ struct ExtractionEdgeCaseTests {
     // MARK: - Year boundary extraction
 
     @Test func dailyExtractionAcrossYearBoundary() {
-        let pattern = DailyPattern(interval: 1)
+        let pattern = DailyPattern(stepSize: 1)
         let start = makeDate(year: 2024, month: 12, day: 30)
         let dates = pattern.extractDates(start: start, first: 4, calendar: calendar)
         #expect(dates == [
@@ -22,7 +22,7 @@ struct ExtractionEdgeCaseTests {
     }
 
     @Test func dailyExtractionAcrossYearBoundaryByRange() {
-        let pattern = DailyPattern(interval: 2)
+        let pattern = DailyPattern(stepSize: 2)
         let start = makeDate(year: 2024, month: 12, day: 29)
         let end = makeDate(year: 2025, month: 1, day: 4)
         let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
@@ -60,7 +60,7 @@ struct ExtractionEdgeCaseTests {
     // MARK: - start > end
 
     @Test func dailyExtractionStartAfterEnd() {
-        let pattern = DailyPattern(interval: 1)
+        let pattern = DailyPattern(stepSize: 1)
         let start = makeDate(year: 2024, month: 1, day: 10)
         let end = makeDate(year: 2024, month: 1, day: 5)
         let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
@@ -94,7 +94,7 @@ struct ExtractionEdgeCaseTests {
     // MARK: - count = 0
 
     @Test func dailyExtractionCountZero() {
-        let pattern = DailyPattern(interval: 1)
+        let pattern = DailyPattern(stepSize: 1)
         let start = makeDate(year: 2024, month: 1, day: 1)
         let dates = pattern.extractDates(start: start, first: 0, calendar: calendar)
         #expect(dates.isEmpty)
@@ -124,7 +124,7 @@ struct ExtractionEdgeCaseTests {
     // MARK: - Large intervals
 
     @Test func dailyLargeInterval() {
-        let pattern = DailyPattern(interval: 30)
+        let pattern = DailyPattern(stepSize: 30)
         let start = makeDate(year: 2024, month: 1, day: 1)
         let dates = pattern.extractDates(start: start, first: 3, calendar: calendar)
         #expect(dates == [
@@ -149,7 +149,7 @@ struct ExtractionEdgeCaseTests {
         let dates = [1, 31].map { makeDate(year: 2024, month: 1, day: $0) }
             + [makeDate(year: 2024, month: 3, day: 1)]
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 30))
+        #expect(pattern == DailyPattern(stepSize: 30))
     }
 
     @Test func predictWeeklyLargeStepSize() {
@@ -160,6 +160,69 @@ struct ExtractionEdgeCaseTests {
         ]
         let pattern = WeeklyPattern.predict(from: dates, calendar: calendar)
         #expect(pattern == WeeklyPattern(stepSize: 4, weekDays: [.monday]))
+    }
+
+    // MARK: - Unknown pattern extraction
+
+    @Test func monthlyExtractionAcrossYearBoundary() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15]))
+        let start = makeDate(year: 2024, month: 11, day: 1)
+        let dates = pattern.extractDates(start: start, first: 4, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 11, day: 15),
+            makeDate(year: 2024, month: 12, day: 15),
+            makeDate(year: 2025, month: 1, day: 15),
+            makeDate(year: 2025, month: 2, day: 15),
+        ])
+    }
+
+    @Test func monthlyExtractionAcrossYearBoundaryByRange() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .lastDay)
+        let start = makeDate(year: 2024, month: 11, day: 1)
+        let end = makeDate(year: 2025, month: 2, day: 28)
+        let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 11, day: 30),
+            makeDate(year: 2024, month: 12, day: 31),
+            makeDate(year: 2025, month: 1, day: 31),
+            makeDate(year: 2025, month: 2, day: 28),
+        ])
+    }
+
+    @Test func monthlyExtractionStartAfterEnd() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15]))
+        let start = makeDate(year: 2024, month: 6, day: 1)
+        let end = makeDate(year: 2024, month: 3, day: 31)
+        let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
+        #expect(dates.isEmpty)
+    }
+
+    @Test func monthlyExtractionCountZero() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15]))
+        let start = makeDate(year: 2024, month: 1, day: 1)
+        let dates = pattern.extractDates(start: start, first: 0, calendar: calendar)
+        #expect(dates.isEmpty)
+    }
+
+    @Test func monthlyLargeStepSize() {
+        let pattern = MonthlyPattern(stepSize: 6, anchor: .daysOfMonth([1]))
+        let start = makeDate(year: 2024, month: 1, day: 1)
+        let dates = pattern.extractDates(start: start, first: 3, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 1, day: 1),
+            makeDate(year: 2024, month: 7, day: 1),
+            makeDate(year: 2025, month: 1, day: 1),
+        ])
+    }
+
+    @Test func predictMonthlyAcrossYearBoundary() {
+        let dates = [
+            makeDate(year: 2024, month: 11, day: 15),
+            makeDate(year: 2024, month: 12, day: 15),
+            makeDate(year: 2025, month: 1, day: 15),
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15])))
     }
 
     // MARK: - Unknown pattern extraction

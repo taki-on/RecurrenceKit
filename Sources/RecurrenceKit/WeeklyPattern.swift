@@ -12,7 +12,9 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
         precondition(stepSize > 0, "Step size must be positive")
         precondition(!weekDays.isEmpty, "Must have at least one weekday")
         self.stepSize = stepSize
-        self.weekDays = weekDays
+        var seen = Set<WeekDay>()
+        let unique = weekDays.filter { seen.insert($0).inserted }
+        self.weekDays = unique.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
     /// Extracts all dates matching this pattern between `start` and `end` (inclusive).
@@ -25,7 +27,7 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
         var weekStart = startOfWeek(containing: start, calendar: calendar)
 
         while weekStart <= end {
-            for weekDay in weekDays.sorted(by: { $0.rawValue < $1.rawValue }) {
+            for weekDay in weekDays {
                 guard let date = dateForWeekday(weekDay, inWeekOf: weekStart, calendar: calendar) else {
                     continue
                 }
@@ -51,7 +53,7 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
         var weekStart = startOfWeek(containing: start, calendar: calendar)
 
         while dates.count < count {
-            for weekDay in weekDays.sorted(by: { $0.rawValue < $1.rawValue }) {
+            for weekDay in weekDays {
                 guard let date = dateForWeekday(weekDay, inWeekOf: weekStart, calendar: calendar) else {
                     continue
                 }
@@ -139,6 +141,32 @@ public struct WeeklyPattern: Codable, Hashable, Sendable {
         }
 
         guard let stepSize else { return nil }
+
+        // Verify temporal co-occurrence: all weekday groups must occupy
+        // the same "step slots" (i.e., appear in the same calendar weeks).
+        // Without this check, dates on different weekdays months apart
+        // could be falsely detected as a multi-weekday weekly pattern.
+        guard let earliest = sorted.first else { return nil }
+        var slotsByWeekday: [Int: Set<Int>] = [:]
+        for date in sorted {
+            guard let dayDiff = calendar.dateComponents(
+                [.day], from: earliest, to: date
+            ).day else { return nil }
+            let slot = (dayDiff / 7) / stepSize
+            let wd = calendar.component(.weekday, from: date)
+            slotsByWeekday[wd, default: []].insert(slot)
+        }
+        let slotSets = Array(slotsByWeekday.values)
+        guard let maxSlotSet = slotSets.max(by: { $0.count < $1.count }) else {
+            return nil
+        }
+        for set in slotSets {
+            if set.count == maxSlotSet.count {
+                guard set == maxSlotSet else { return nil }
+            } else {
+                guard set.isSubset(of: maxSlotSet) else { return nil }
+            }
+        }
 
         let weekDays = datesByWeekday.keys
             .sorted()

@@ -24,7 +24,7 @@ struct RecurrencePatternTests {
     @Test func predictDetectsDaily() {
         let dates = (1...4).map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == .daily(DailyPattern(interval: 1)))
+        #expect(pattern == .daily(DailyPattern(stepSize: 1)))
     }
 
     @Test func predictDetectsWeekdays() {
@@ -72,6 +72,47 @@ struct RecurrencePatternTests {
         #expect(pattern == .unknown(dates))
     }
 
+    @Test func predictDetectsMonthlyDayOfMonth() {
+        let dates = [1, 2, 3].map { makeDate(year: 2024, month: $0, day: 15) }
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .monthly(MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15]))))
+    }
+
+    @Test func predictDetectsMonthlyLastDay() {
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 31),
+            makeDate(year: 2024, month: 2, day: 29),
+            makeDate(year: 2024, month: 3, day: 31),
+        ]
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .monthly(MonthlyPattern(stepSize: 1, anchor: .lastDay)))
+    }
+
+    @Test func predictDetectsMonthlyWeekdayOrdinal() {
+        // 2nd Tuesday of Jan (9), Feb (13), Mar (12) 2024
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 9),
+            makeDate(year: 2024, month: 2, day: 13),
+            makeDate(year: 2024, month: 3, day: 12),
+        ]
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .monthly(MonthlyPattern(
+            stepSize: 1,
+            anchor: .weekdayOrdinal(ordinal: 2, weekDay: .tuesday)
+        )))
+    }
+
+    @Test func predictDetectsMonthlyLastWeekday() {
+        // Last Friday of Jan (26), Feb (23), Mar (29) 2024
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 26),
+            makeDate(year: 2024, month: 2, day: 23),
+            makeDate(year: 2024, month: 3, day: 29),
+        ]
+        let pattern = RecurrencePattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == .monthly(MonthlyPattern(stepSize: 1, anchor: .lastWeekday(.friday))))
+    }
+
     @Test func predictEmptyInputReturnsUnknown() {
         let pattern = RecurrencePattern.predict(from: [], calendar: calendar)
         #expect(pattern == .unknown([]))
@@ -85,7 +126,7 @@ struct RecurrencePatternTests {
         #expect(recurrence != nil)
         #expect(recurrence?.startDate == makeDate(year: 2024, month: 1, day: 1))
         if case .daily(let daily) = recurrence?.pattern {
-            #expect(daily.interval == 1)
+            #expect(daily.stepSize == 1)
         } else {
             Issue.record("Expected daily pattern")
         }
@@ -99,7 +140,7 @@ struct RecurrencePatternTests {
         let recurrence = DateRecurrence(
             startDate: makeDate(year: 2024, month: 1, day: 1),
             endDate: makeDate(year: 2024, month: 1, day: 10),
-            pattern: .daily(DailyPattern(interval: 2))
+            pattern: .daily(DailyPattern(stepSize: 2))
         )
         let dates = recurrence.extractDates(first: 3, calendar: calendar)
         #expect(dates == [

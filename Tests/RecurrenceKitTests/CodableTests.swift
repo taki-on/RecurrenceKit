@@ -10,7 +10,7 @@ struct CodableTests {
     // MARK: - DailyPattern
 
     @Test func dailyPatternCodable() throws {
-        let pattern = DailyPattern(interval: 3)
+        let pattern = DailyPattern(stepSize: 3)
         let data = try JSONEncoder().encode(pattern)
         let decoded = try JSONDecoder().decode(DailyPattern.self, from: data)
         #expect(decoded == pattern)
@@ -43,10 +43,40 @@ struct CodableTests {
         #expect(decoded == pattern)
     }
 
+    // MARK: - MonthlyPattern
+
+    @Test func monthlyDayOfMonthCodable() throws {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15]))
+        let data = try JSONEncoder().encode(pattern)
+        let decoded = try JSONDecoder().decode(MonthlyPattern.self, from: data)
+        #expect(decoded == pattern)
+    }
+
+    @Test func monthlyWeekdayOrdinalCodable() throws {
+        let pattern = MonthlyPattern(stepSize: 2, anchor: .weekdayOrdinal(ordinal: 3, weekDay: .friday))
+        let data = try JSONEncoder().encode(pattern)
+        let decoded = try JSONDecoder().decode(MonthlyPattern.self, from: data)
+        #expect(decoded == pattern)
+    }
+
+    @Test func monthlyLastDayCodable() throws {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .lastDay)
+        let data = try JSONEncoder().encode(pattern)
+        let decoded = try JSONDecoder().decode(MonthlyPattern.self, from: data)
+        #expect(decoded == pattern)
+    }
+
+    @Test func monthlyLastWeekdayCodable() throws {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .lastWeekday(.wednesday))
+        let data = try JSONEncoder().encode(pattern)
+        let decoded = try JSONDecoder().decode(MonthlyPattern.self, from: data)
+        #expect(decoded == pattern)
+    }
+
     // MARK: - RecurrencePattern (enum)
 
     @Test func recurrencePatternDailyCodable() throws {
-        let pattern = RecurrencePattern.daily(DailyPattern(interval: 1))
+        let pattern = RecurrencePattern.daily(DailyPattern(stepSize: 1))
         let data = try JSONEncoder().encode(pattern)
         let decoded = try JSONDecoder().decode(RecurrencePattern.self, from: data)
         #expect(decoded == pattern)
@@ -75,6 +105,15 @@ struct CodableTests {
         #expect(decoded == pattern)
     }
 
+    @Test func recurrencePatternMonthlyCodable() throws {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([15]))
+        )
+        let data = try JSONEncoder().encode(pattern)
+        let decoded = try JSONDecoder().decode(RecurrencePattern.self, from: data)
+        #expect(decoded == pattern)
+    }
+
     @Test func recurrencePatternUnknownCodable() throws {
         let dates = [1, 5, 10].map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = RecurrencePattern.unknown(dates)
@@ -89,7 +128,7 @@ struct CodableTests {
         let recurrence = DateRecurrence(
             startDate: makeDate(year: 2024, month: 1, day: 1),
             endDate: makeDate(year: 2024, month: 3, day: 1),
-            pattern: .daily(DailyPattern(interval: 2))
+            pattern: .daily(DailyPattern(stepSize: 2))
         )
         let data = try JSONEncoder().encode(recurrence)
         let decoded = try JSONDecoder().decode(DateRecurrence.self, from: data)

@@ -13,19 +13,19 @@ struct DailyPatternTests {
         // Jan 1–4, 2024 (consecutive days)
         let dates = (1...4).map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 1))
+        #expect(pattern == DailyPattern(stepSize: 1))
     }
 
     @Test func predictEverySecondDay() {
         let dates = [1, 3, 5, 7].map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 2))
+        #expect(pattern == DailyPattern(stepSize: 2))
     }
 
     @Test func predictEveryThirdDay() {
         let dates = [1, 4, 7, 10].map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 3))
+        #expect(pattern == DailyPattern(stepSize: 3))
     }
 
     @Test func predictReturnsNilForIrregularDates() {
@@ -46,13 +46,13 @@ struct DailyPatternTests {
         // Dates given out of order should still be detected
         let dates = [5, 1, 3, 7].map { makeDate(year: 2024, month: 1, day: $0) }
         let pattern = DailyPattern.predict(from: dates, calendar: calendar)
-        #expect(pattern == DailyPattern(interval: 2))
+        #expect(pattern == DailyPattern(stepSize: 2))
     }
 
     // MARK: - Extraction by range
 
     @Test func extractEveryDayInRange() {
-        let pattern = DailyPattern(interval: 1)
+        let pattern = DailyPattern(stepSize: 1)
         let start = makeDate(year: 2024, month: 1, day: 1)
         let end = makeDate(year: 2024, month: 1, day: 3)
         let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
@@ -64,7 +64,7 @@ struct DailyPatternTests {
     }
 
     @Test func extractEverySecondDayInRange() {
-        let pattern = DailyPattern(interval: 2)
+        let pattern = DailyPattern(stepSize: 2)
         let start = makeDate(year: 2024, month: 1, day: 1)
         let end = makeDate(year: 2024, month: 1, day: 5)
         let dates = pattern.extractDates(start: start, end: end, calendar: calendar)
@@ -78,7 +78,7 @@ struct DailyPatternTests {
     // MARK: - Extraction by count
 
     @Test func extractFirstThreeDaysWithInterval2() {
-        let pattern = DailyPattern(interval: 2)
+        let pattern = DailyPattern(stepSize: 2)
         let start = makeDate(year: 2024, month: 1, day: 1)
         let dates = pattern.extractDates(start: start, first: 3, calendar: calendar)
         #expect(dates == [
@@ -89,7 +89,7 @@ struct DailyPatternTests {
     }
 
     @Test func extractAcrossMonthBoundary() {
-        let pattern = DailyPattern(interval: 1)
+        let pattern = DailyPattern(stepSize: 1)
         let start = makeDate(year: 2024, month: 1, day: 30)
         let dates = pattern.extractDates(start: start, first: 4, calendar: calendar)
         #expect(dates == [

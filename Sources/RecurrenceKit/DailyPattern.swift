@@ -3,11 +3,11 @@ import Foundation
 /// A pattern representing recurrence every N days.
 public struct DailyPattern: Codable, Hashable, Sendable {
     /// The number of days between each occurrence.
-    public let interval: Int
+    public let stepSize: Int
 
-    public init(interval: Int) {
-        precondition(interval > 0, "Interval must be positive")
-        self.interval = interval
+    public init(stepSize: Int) {
+        precondition(stepSize > 0, "Step size must be positive")
+        self.stepSize = stepSize
     }
 
     /// Extracts all dates matching this pattern between `start` and `end` (inclusive).
@@ -20,7 +20,7 @@ public struct DailyPattern: Codable, Hashable, Sendable {
         var current = start
         while current <= end {
             dates.append(current)
-            guard let next = calendar.date(byAdding: .day, value: interval, to: current) else { break }
+            guard let next = calendar.date(byAdding: .day, value: stepSize, to: current) else { break }
             current = next
         }
         return dates
@@ -36,7 +36,7 @@ public struct DailyPattern: Codable, Hashable, Sendable {
         var current = start
         for _ in 0..<count {
             dates.append(current)
-            guard let next = calendar.date(byAdding: .day, value: interval, to: current) else { break }
+            guard let next = calendar.date(byAdding: .day, value: stepSize, to: current) else { break }
             current = next
         }
         return dates
@@ -45,7 +45,7 @@ public struct DailyPattern: Codable, Hashable, Sendable {
     /// Attempts to predict a daily pattern from an array of dates.
     ///
     /// Returns a `DailyPattern` if all consecutive dates are separated by the same
-    /// number of days, or `nil` if no consistent interval is found.
+    /// number of days, or `nil` if no consistent step is found.
     ///
     /// Dates are normalized to start-of-day and deduplicated before analysis.
     public static func predict(
@@ -55,19 +55,19 @@ public struct DailyPattern: Codable, Hashable, Sendable {
         let sorted = dates.normalizedForPrediction(calendar: calendar)
         guard sorted.count >= 2 else { return nil }
 
-        var expectedInterval: Int?
+        var expectedStep: Int?
         for i in 1..<sorted.count {
             let days = calendar.dateComponents([.day], from: sorted[i - 1], to: sorted[i]).day
             guard let days, days > 0 else { return nil }
 
-            if let expected = expectedInterval {
+            if let expected = expectedStep {
                 guard days == expected else { return nil }
             } else {
-                expectedInterval = days
+                expectedStep = days
             }
         }
 
-        guard let interval = expectedInterval else { return nil }
-        return DailyPattern(interval: interval)
+        guard let step = expectedStep else { return nil }
+        return DailyPattern(stepSize: step)
     }
 }

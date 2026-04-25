@@ -6,7 +6,7 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
     case weekdays(WeekdaysPattern)
     case weekends(WeekendsPattern)
     case weekly(WeeklyPattern)
-    // TODO: case monthly(MonthlyPattern)
+    case monthly(MonthlyPattern)
     case unknown([Date])
 
     /// Suggested number of dates to extract for a preview.
@@ -16,14 +16,15 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
         case .weekdays: 10
         case .weekends: 10
         case .weekly: 10
+        case .monthly: 12
         case .unknown(let dates): dates.count
         }
     }
 
     /// Attempts to detect a recurrence pattern from an array of dates.
     ///
-    /// Tries the most specific patterns first (weekdays/weekends), then weekly,
-    /// then daily. Falls back to `.unknown` if no pattern is detected.
+    /// Tries the most specific patterns first (weekdays/weekends), then monthly,
+    /// weekly, and finally daily. Falls back to `.unknown` if no pattern is detected.
     public static func predict(
         from dates: [Date],
         calendar: Calendar = .current
@@ -32,6 +33,8 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
             return .weekdays(pattern)
         } else if let pattern = WeekendsPattern.predict(from: dates, calendar: calendar) {
             return .weekends(pattern)
+        } else if let pattern = MonthlyPattern.predict(from: dates, calendar: calendar) {
+            return .monthly(pattern)
         } else if let pattern = WeeklyPattern.predict(from: dates, calendar: calendar) {
             return .weekly(pattern)
         } else if let pattern = DailyPattern.predict(from: dates, calendar: calendar) {
@@ -55,6 +58,8 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
             pattern.extractDates(start: start, end: end, calendar: calendar)
         case .weekly(let pattern):
             pattern.extractDates(start: start, end: end, calendar: calendar)
+        case .monthly(let pattern):
+            pattern.extractDates(start: start, end: end, calendar: calendar)
         case .unknown(let dates):
             dates.filter { $0 >= start && $0 <= end }
         }
@@ -74,6 +79,8 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
         case .weekends(let pattern):
             pattern.extractDates(start: start, first: count, calendar: calendar)
         case .weekly(let pattern):
+            pattern.extractDates(start: start, first: count, calendar: calendar)
+        case .monthly(let pattern):
             pattern.extractDates(start: start, first: count, calendar: calendar)
         case .unknown(let dates):
             Array(dates.prefix(count))

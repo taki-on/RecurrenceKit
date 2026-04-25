@@ -12,6 +12,8 @@ extension RecurrencePattern: CustomStringConvertible {
             p.recurrenceDescription
         case .weekly(let p):
             p.recurrenceDescription
+        case .monthly(let p):
+            p.recurrenceDescription
         case .unknown:
             "No pattern detected"
         }
@@ -20,10 +22,10 @@ extension RecurrencePattern: CustomStringConvertible {
 
 extension DailyPattern {
     var recurrenceDescription: String {
-        switch interval {
+        switch stepSize {
         case 1: "Every day"
         case 2: "Every other day"
-        default: "Every \(interval) days"
+        default: "Every \(stepSize) days"
         }
     }
 }
@@ -69,5 +71,53 @@ extension WeeklyPattern {
         default:
             return "Every \(stepSize) weeks on \(daysList)"
         }
+    }
+}
+
+extension MonthlyPattern {
+    var recurrenceDescription: String {
+        let frequency: String
+        switch stepSize {
+        case 1: frequency = "Every month"
+        case 2: frequency = "Every other month"
+        default: frequency = "Every \(stepSize) months"
+        }
+
+        let anchorText: String
+        switch anchor {
+        case .daysOfMonth(let days):
+            if days.count == 1 {
+                anchorText = "on the \(ordinalString(days[0]))"
+            } else {
+                let dayList = days.map { ordinalString($0) }
+                    .formatted(.list(type: .and))
+                anchorText = "on the \(dayList)"
+            }
+        case .weekdayOrdinal(let ordinal, let weekDay):
+            anchorText = "on the \(ordinalString(ordinal)) \(weekDay)"
+        case .lastDay:
+            anchorText = "on the last day"
+        case .lastWeekday(let weekDay):
+            anchorText = "on the last \(weekDay)"
+        }
+
+        return "\(frequency) \(anchorText)"
+    }
+
+    private func ordinalString(_ n: Int) -> String {
+        let suffix: String
+        let ones = n % 10
+        let tens = (n / 10) % 10
+        if tens == 1 {
+            suffix = "th"
+        } else {
+            switch ones {
+            case 1: suffix = "st"
+            case 2: suffix = "nd"
+            case 3: suffix = "rd"
+            default: suffix = "th"
+            }
+        }
+        return "\(n)\(suffix)"
     }
 }
