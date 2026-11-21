@@ -73,6 +73,13 @@ struct CodableTests {
         #expect(decoded == pattern)
     }
 
+    @Test func monthlyBusinessDayOrdinalsCodable() throws {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([1, -1]))
+        let data = try JSONEncoder().encode(pattern)
+        let decoded = try JSONDecoder().decode(MonthlyPattern.self, from: data)
+        #expect(decoded == pattern)
+    }
+
     // MARK: - RecurrencePattern (enum)
 
     @Test func recurrencePatternDailyCodable() throws {

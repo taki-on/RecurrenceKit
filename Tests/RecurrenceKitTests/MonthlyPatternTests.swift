@@ -667,4 +667,153 @@ struct MonthlyPatternTests {
         )
         #expect(pattern.description == "Every other month on the 2nd weekend")
     }
+
+    // MARK: - Business day ordinal prediction
+
+    @Test func predictFirstBusinessDay() {
+        // Jun 1 2024 is a Saturday, so the first business day is Mon Jun 3.
+        let dates = [
+            makeDate(year: 2024, month: 3, day: 1),
+            makeDate(year: 2024, month: 4, day: 1),
+            makeDate(year: 2024, month: 5, day: 1),
+            makeDate(year: 2024, month: 6, day: 3),
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([1])))
+    }
+
+    @Test func predictLastBusinessDay() {
+        // Mar 31 2024 is a Sunday, so the last business day is Fri Mar 29.
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 31),
+            makeDate(year: 2024, month: 2, day: 29),
+            makeDate(year: 2024, month: 3, day: 29),
+            makeDate(year: 2024, month: 4, day: 30),
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([-1])))
+    }
+
+    @Test func predictFirstBusinessDayBimonthly() {
+        let dates = [
+            makeDate(year: 2024, month: 3, day: 1),
+            makeDate(year: 2024, month: 5, day: 1),
+            makeDate(year: 2024, month: 7, day: 1),
+            makeDate(year: 2024, month: 9, day: 2), // Sep 1 is a Sunday
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 2, anchor: .businessDayOrdinals([1])))
+    }
+
+    @Test func fixedDayStillPredictsDaysOfMonth() {
+        // The 1st falls on a weekday in all three months; the simpler anchor wins.
+        let dates = [
+            makeDate(year: 2024, month: 1, day: 1),
+            makeDate(year: 2024, month: 2, day: 1),
+            makeDate(year: 2024, month: 3, day: 1),
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        #expect(pattern == MonthlyPattern(stepSize: 1, anchor: .daysOfMonth([1])))
+    }
+
+    @Test func weekendDatesAreNotBusinessDays() {
+        let dates = [
+            makeDate(year: 2024, month: 6, day: 1), // Sat
+            makeDate(year: 2024, month: 7, day: 6), // Sat
+            makeDate(year: 2024, month: 8, day: 3), // Sat
+        ]
+        let pattern = MonthlyPattern.predict(from: dates, calendar: calendar)
+        if case .businessDayOrdinals = pattern?.anchor {
+            Issue.record("Weekend dates must not be detected as business days")
+        }
+    }
+
+    // MARK: - Business day ordinal extraction
+
+    @Test func extractFirstBusinessDayByCount() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([1]))
+        let start = makeDate(year: 2024, month: 5, day: 1)
+        let dates = pattern.extractDates(start: start, first: 3, calendar: calendar)
+        #expect(dates == [
+            makeDate(year: 2024, month: 5, day: 1),
+            makeDate(year: 2024, month: 6, day: 3), // Jun 1 is a Saturday
+            makeDate(year: 2024, month: 7, day: 1),
+        ])
+    }
+
+    @Test func extractLastBusinessDayInRange() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([-1]))
+        let dates = pattern.extractDates(
+            start: makeDate(year: 2024, month: 3, day: 1),
+            end: makeDate(year: 2024, month: 5, day: 31),
+            calendar: calendar
+        )
+        #expect(dates == [
+            makeDate(year: 2024, month: 3, day: 29), // Mar 30-31 is a weekend
+            makeDate(year: 2024, month: 4, day: 30),
+            makeDate(year: 2024, month: 5, day: 31),
+        ])
+    }
+
+    @Test func extractFirstAndLastAndSecondToLast() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([-2, 1, -1]))
+        let dates = pattern.extractDates(
+            start: makeDate(year: 2024, month: 6, day: 1),
+            first: 4,
+            calendar: calendar
+        )
+        #expect(dates == [
+            makeDate(year: 2024, month: 6, day: 3),
+            makeDate(year: 2024, month: 6, day: 27),
+            makeDate(year: 2024, month: 6, day: 28),
+            makeDate(year: 2024, month: 7, day: 1),
+        ])
+    }
+
+    @Test func extractLastBusinessDayLeapFebruary() {
+        let pattern = MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([-1]))
+        let dates = pattern.extractDates(
+            start: makeDate(year: 2024, month: 2, day: 1),
+            first: 1,
+            calendar: calendar
+        )
+        #expect(dates == [makeDate(year: 2024, month: 2, day: 29)])
+    }
+
+    @Test func extractFirstBusinessDayBimonthly() {
+        let pattern = MonthlyPattern(stepSize: 2, anchor: .businessDayOrdinals([1]))
+        let dates = pattern.extractDates(
+            start: makeDate(year: 2024, month: 7, day: 1),
+            first: 3,
+            calendar: calendar
+        )
+        #expect(dates == [
+            makeDate(year: 2024, month: 7, day: 1),
+            makeDate(year: 2024, month: 9, day: 2), // Sep 1 is a Sunday
+            makeDate(year: 2024, month: 11, day: 1),
+        ])
+    }
+
+    // MARK: - Business day ordinal description
+
+    @Test func descriptionFirstBusinessDay() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([1]))
+        )
+        #expect(pattern.description == "Every month on the 1st business day")
+    }
+
+    @Test func descriptionLastBusinessDay() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 1, anchor: .businessDayOrdinals([-1]))
+        )
+        #expect(pattern.description == "Every month on the last business day")
+    }
+
+    @Test func descriptionFirstAndSecondToLastBusinessDaysBimonthly() {
+        let pattern = RecurrencePattern.monthly(
+            MonthlyPattern(stepSize: 2, anchor: .businessDayOrdinals([-2, 1]))
+        )
+        #expect(pattern.description == "Every other month on the 1st and 2nd to last business days")
+    }
 }

@@ -85,6 +85,7 @@ let recurrence = DateRecurrence.make(from: myDates)
 | | Every month on the 2nd Tuesday, every month on the 1st and 3rd Friday | Nth weekday occurrences within each month |
 | | Every month on the 1st weekend, every month on the 1st and 3rd weekends | Nth weekend (Sat+Sun) pairs within each month |
 | | Every month on the last day, every month on the last Friday | Last day or last weekday of the month |
+| | Every month on the 1st business day, every month on the last business day | Nth business day (Mon–Fri) from the start (1, 2, …) or end (-1, -2, …) of the month; holidays are not considered |
 | **Yearly** | Every year on July 4th, every year on the 3rd Monday of January | Fixed date, Nth weekday, last day, or last weekday in a specific month |
 | **Unknown** | Irregular dates | Fallback when no pattern is detected |
 
@@ -110,7 +111,7 @@ RecurrencePattern.yearly(YearlyPattern(stepSize: 1, month: 11, anchor: .weekdayO
 - **`WeeklyPattern`** — every N weeks on specific weekdays.
 - **`WeekdaysPattern`** — every N weeks on Mon–Fri.
 - **`WeekendsPattern`** — every N weeks on Sat–Sun.
-- **`MonthlyPattern`** — every N months with anchor: fixed days, Nth weekday(s), weekend ordinals, last day, or last weekday.
+- **`MonthlyPattern`** — every N months with anchor: fixed days, Nth weekday(s), weekend ordinals, business-day ordinals, last day, or last weekday.
 - **`YearlyPattern`** — every N years in a specific month with anchor: fixed day, Nth weekday, last day, or last weekday.
 - **`DateRecurrence`** — convenience wrapper combining start date, end date, and pattern.
 - **`WeekDay`** — enum matching Foundation's `Calendar` weekday numbering (Sunday = 1).

@@ -115,11 +115,24 @@ extension MonthlyPattern {
             anchorText = "on the last day"
         case .lastWeekday(let weekDay):
             anchorText = "on the last \(weekDay)"
+        case .businessDayOrdinals(let ordinals):
+            let list = ordinals.sorted(by: { lhs, rhs in
+                (lhs > 0) == (rhs > 0) ? lhs < rhs : lhs > 0
+            }).map { businessDayOrdinalString($0) }
+                .formatted(.list(type: .and))
+            anchorText = "on the \(list) business day\(ordinals.count == 1 ? "" : "s")"
         }
 
         return "\(frequency) \(anchorText)"
     }
 
+    private func businessDayOrdinalString(_ n: Int) -> String {
+        switch n {
+        case -1: "last"
+        case ..<0: "\(ordinalString(-n)) to last"
+        default: ordinalString(n)
+        }
+    }
     private func ordinalString(_ n: Int) -> String {
         let suffix: String
         let ones = n % 10
