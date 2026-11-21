@@ -64,6 +64,13 @@ let futureDates = pattern.extractDates(start: Date(), first: 10)
 let rangeDates = pattern.extractDates(start: rangeStart, end: rangeEnd)
 ```
 
+For patterns with a step greater than 1 (for example every other Monday), `start` sets both the phase and the lower bound. To keep the phase fixed while moving the lower bound (such as "today"), pass the earliest selected date as `anchor`:
+
+```swift
+let upcoming = pattern.extractDates(anchor: firstSelectedDate, after: Date(), first: 10)
+let inRange = pattern.extractDates(anchor: firstSelectedDate, after: Date(), end: rangeEnd)
+```
+
 ### Using DateRecurrence (convenience)
 
 ```swift

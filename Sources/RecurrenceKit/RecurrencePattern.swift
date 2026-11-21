@@ -94,4 +94,42 @@ public enum RecurrencePattern: Codable, Hashable, Sendable {
             Array(dates.prefix(count))
         }
     }
+
+    /// Extracts all dates matching this pattern between `cutoff` and `end` (inclusive),
+    /// using `anchor` as the phase reference for patterns with `stepSize > 1`.
+    ///
+    /// Unlike `extractDates(start:end:)`, which uses `start` as both the phase anchor and
+    /// the lower bound, this keeps the phase fixed when `cutoff` moves (for example, "today").
+    /// `anchor` should be the earliest date the pattern was predicted from.
+    public func extractDates(
+        anchor: Date,
+        after cutoff: Date,
+        end: Date,
+        calendar: Calendar = .current
+    ) -> [Date] {
+        extractDates(start: anchor, end: end, calendar: calendar).filter { $0 >= cutoff }
+    }
+
+    /// Extracts the first `count` dates at or after `cutoff`, using `anchor` as the phase
+    /// reference for patterns with `stepSize > 1`.
+    ///
+    /// Equivalent to `extractDates(start: anchor, first: ...)` with the dates before `cutoff`
+    /// skipped, so the result does not depend on when `cutoff` falls within a step.
+    public func extractDates(
+        anchor: Date,
+        after cutoff: Date,
+        first count: Int,
+        calendar: Calendar = .current
+    ) -> [Date] {
+        guard count > 0 else { return [] }
+        if case .unknown(let dates) = self {
+            return Array(dates.filter { $0 >= cutoff }.prefix(count))
+        }
+        let skipped = extractDates(start: anchor, end: cutoff, calendar: calendar)
+            .lazy.filter { $0 < cutoff }.count
+        return Array(
+            extractDates(start: anchor, first: skipped + count, calendar: calendar)
+                .lazy.filter { $0 >= cutoff }.prefix(count)
+        )
+    }
 }
