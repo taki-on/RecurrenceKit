@@ -53,5 +53,4 @@ jobs:
           xcodebuild build \
             -scheme RecurrenceKit \
             -destination "${{ matrix.destination }}" \
-            -skipPackageUpdateValidation \
             CODE_SIGNING_ALLOWED=NO
