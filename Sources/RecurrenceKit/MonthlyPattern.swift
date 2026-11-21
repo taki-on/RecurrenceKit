@@ -23,6 +23,12 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
 
         /// The last occurrence of a specific weekday in the month.
         case lastWeekday(WeekDay)
+
+        /// The Nth business days (Monday–Friday) of the month. Positive ordinals count
+        /// from the start of the month (1 = first business day); negative ordinals count
+        /// from the end (-1 = last business day). Ordinals are non-zero; ordinals that
+        /// don't exist in a given month are skipped. Holidays are not considered.
+        case businessDayOrdinals([Int])
     }
 
     /// The number of months between each occurrence.
@@ -38,6 +44,10 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         }
         if case .weekendOrdinals(let ordinals) = anchor {
             precondition(!ordinals.isEmpty, "Must have at least one weekend ordinal")
+        }
+        if case .businessDayOrdinals(let ordinals) = anchor {
+            precondition(!ordinals.isEmpty, "Must have at least one business day ordinal")
+            precondition(!ordinals.contains(0), "Business day ordinals must be non-zero")
         }
         self.stepSize = stepSize
         self.anchor = anchor
@@ -144,6 +154,9 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         if let anchor = detectWeekdayOrdinals(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
+        if let anchor = detectBusinessDayOrdinals(groups, calendar: calendar) {
+            return MonthlyPattern(stepSize: stepSize, anchor: anchor)
+        }
         if let anchor = detectDaysOfMonth(groups, calendar: calendar) {
             return MonthlyPattern(stepSize: stepSize, anchor: anchor)
         }
@@ -185,7 +198,42 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
                 return [d]
             }
             return []
+
+        case .businessDayOrdinals(let ordinals):
+            return datesForBusinessDayOrdinals(
+                ordinals, year: year, month: month, calendar: calendar
+            )
         }
+    }
+
+    /// Returns the business days (Monday–Friday) of the month, in order.
+    private static func businessDays(
+        year: Int, month: Int, calendar: Calendar
+    ) -> [Date] {
+        guard let monthDate = calendar.date(from: DateComponents(year: year, month: month)),
+              let range = calendar.range(of: .day, in: .month, for: monthDate)
+        else { return [] }
+        return range.compactMap { day in
+            guard let date = calendar.date(from: DateComponents(year: year, month: month, day: day)),
+                  isBusinessDay(date, calendar: calendar) else { return nil }
+            return date
+        }
+    }
+
+    private static func isBusinessDay(_ date: Date, calendar: Calendar) -> Bool {
+        let weekday = calendar.component(.weekday, from: date)
+        return weekday != WeekDay.saturday.rawValue && weekday != WeekDay.sunday.rawValue
+    }
+
+    private func datesForBusinessDayOrdinals(
+        _ ordinals: [Int], year: Int, month: Int, calendar: Calendar
+    ) -> [Date] {
+        let days = Self.businessDays(year: year, month: month, calendar: calendar)
+        let indices = ordinals.compactMap { ordinal -> Int? in
+            let index = ordinal > 0 ? ordinal - 1 : days.count + ordinal
+            return days.indices.contains(index) ? index : nil
+        }
+        return Set(indices).sorted().map { days[$0] }
     }
 
     private func dateForDayOfMonth(
@@ -389,6 +437,55 @@ public struct MonthlyPattern: Codable, Hashable, Sendable {
         }
 
         return .weekdayOrdinals(ordinals: maxSet.sorted(), weekDay: wd)
+    }
+
+    private static func detectBusinessDayOrdinals(
+        _ groups: [MonthGroup], calendar: Calendar
+    ) -> Anchor? {
+        let allDates = groups.flatMap(\.dates)
+        guard allDates.allSatisfy({ isBusinessDay($0, calendar: calendar) }) else { return nil }
+
+        // Same day number every month is better described by daysOfMonth.
+        let dayNumbers = Set(allDates.map { calendar.component(.day, from: $0) })
+
+        // Prefer counting from the start of the month, then from the end.
+        for fromEnd in [false, true] {
+            var ordinalSets: [Set<Int>] = []
+            for group in groups {
+                guard let days = businessDayCount(
+                    year: group.year, month: group.month, calendar: calendar
+                ) else { return nil }
+                let ordinals = group.dates.map { date -> Int in
+                    let position = businessDayPosition(of: date, calendar: calendar)
+                    return fromEnd ? position - days - 1 : position
+                }
+                ordinalSets.append(Set(ordinals))
+            }
+
+            guard let maxSet = ordinalSets.max(by: { $0.count < $1.count }) else { continue }
+
+            // All groups must match, or the last may be a trailing subset.
+            let consistent = ordinalSets.enumerated().allSatisfy { i, set in
+                i == ordinalSets.count - 1 ? set.isSubset(of: maxSet) : set == maxSet
+            }
+            guard consistent else { continue }
+            if dayNumbers.count == maxSet.count { return nil }
+            return .businessDayOrdinals(maxSet.sorted())
+        }
+        return nil
+    }
+
+    private static func businessDayCount(year: Int, month: Int, calendar: Calendar) -> Int? {
+        let days = businessDays(year: year, month: month, calendar: calendar)
+        return days.isEmpty ? nil : days.count
+    }
+
+    /// The 1-based position of `date` among the business days of its month.
+    private static func businessDayPosition(of date: Date, calendar: Calendar) -> Int {
+        let year = calendar.component(.year, from: date)
+        let month = calendar.component(.month, from: date)
+        let days = businessDays(year: year, month: month, calendar: calendar)
+        return (days.firstIndex(of: date) ?? 0) + 1
     }
 
     private static func detectLastWeekday(
